@@ -4,9 +4,12 @@ import random
 import json
 import os
 
+
 # =========================
 # Einstellungen
 # =========================
+
+HIGHSCORE_DATEI = "highscores.json"
 
 ZEITLIMIT = {
     "Fair": {
@@ -21,12 +24,15 @@ ZEITLIMIT = {
     }
 }
 
-HIGHSCORE_DATEI = "highscores.json"
+PUNKTE = {
+    "einfach": 10,
+    "mittel": 20,
+    "schwer": 30
+}
+
 
 # =========================
 # Fragen
-# Richtige Antworten sind NICHT immer an erster Stelle.
-# Antworten werden später zusätzlich nochmal zufällig gemischt.
 # =========================
 
 fragen = {
@@ -310,480 +316,537 @@ fragen = {
     ]
 }
 
-# =========================
-# Spiel-Fragen auswählen
-# 3 einfach, 3 mittel, 3 schwer
-# =========================
-
-spiel_fragen = (
-    random.sample(fragen["einfach"], 3) +
-    random.sample(fragen["mittel"], 3) +
-    random.sample(fragen["schwer"], 3)
-)
 
 # =========================
-# Hauptfenster
+# Hilfsfunktionen
+# =========================
+
+def lade_highscores():
+    if not os.path.exists(HIGHSCORE_DATEI):
+        return []
+
+    try:
+        with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as datei:
+            return json.load(datei)
+    except json.JSONDecodeError:
+        return []
+
+
+def speichere_highscores(daten):
+    with open(HIGHSCORE_DATEI, "w", encoding="utf-8") as datei:
+        json.dump(daten, datei, indent=4, ensure_ascii=False)
+
+
+def waehle_spiel_fragen():
+    return (
+        random.sample(fragen["einfach"], 3) +
+        random.sample(fragen["mittel"], 3) +
+        random.sample(fragen["schwer"], 3)
+    )
+
+
+def frage_schwierigkeit(frage_index):
+    if frage_index < 3:
+        return "einfach"
+    elif frage_index < 6:
+        return "mittel"
+    else:
+        return "schwer"
+
+
+# =========================
+# Spielklasse
+# =========================
+
+class QuizMaster:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("QuizMaster - TH OWL & Herford Edition")
+        self.root.geometry("950x720")
+        self.root.configure(bg="#001f3f")
+
+        self.spieler_liste = []
+        self.aktueller_spieler_index = 0
+        self.spiel_fragen = []
+
+        self.frage_index = 0
+        self.punkte = 0
+        self.timer = 0
+        self.timer_id = None
+
+        self.joker_5050 = True
+        self.joker_anruf = True
+
+        self.antwort_buttons = []
+
+        self.spieler = "Gast"
+        self.modus = "Fair"
+
+        self.setup_start()
+        self.setup_gui()
+        self.starte_spieler_runde()
+
+    # =========================
+    # Startabfragen
+    # =========================
+
+    def setup_start(self):
+        spieleranzahl = simpledialog.askinteger(
+            "Spieleranzahl",
+            "Wie viele Spieler? 1 oder 2:"
+        )
+
+        if spieleranzahl not in [1, 2]:
+            spieleranzahl = 1
+
+        for nummer in range(spieleranzahl):
+            name = simpledialog.askstring(
+                "Name",
+                f"Name Spieler {nummer + 1}:"
+            )
+
+            if not name:
+                name = f"Spieler {nummer + 1}"
+
+            self.spieler_liste.append({
+                "name": name,
+                "punkte": 0
+            })
+
+        modus = simpledialog.askstring(
+            "Spielmodus",
+            "Wähle Modus: Fair oder Hard"
+        )
+
+        if modus not in ["Fair", "Hard"]:
+            modus = "Fair"
+
+        self.modus = modus
+
+    # =========================
+    # Oberfläche
+    # =========================
+
+    def setup_gui(self):
+        self.titel = tk.Label(
+            self.root,
+            text="QUIZMASTER",
+            font=("Arial", 30, "bold"),
+            fg="gold",
+            bg="#001f3f"
+        )
+        self.titel.pack(pady=10)
+
+        self.untertitel = tk.Label(
+            self.root,
+            text="TH OWL & Herford Edition",
+            font=("Arial", 16, "bold"),
+            fg="white",
+            bg="#001f3f"
+        )
+        self.untertitel.pack()
+
+        self.info_label = tk.Label(
+            self.root,
+            text="",
+            font=("Arial", 15),
+            fg="white",
+            bg="#001f3f"
+        )
+        self.info_label.pack(pady=10)
+
+        self.punkte_label = tk.Label(
+            self.root,
+            text="Punkte: 0",
+            font=("Arial", 16),
+            fg="white",
+            bg="#001f3f"
+        )
+        self.punkte_label.pack()
+
+        self.timer_label = tk.Label(
+            self.root,
+            text="Zeit: 0",
+            font=("Arial", 18, "bold"),
+            fg="red",
+            bg="#001f3f"
+        )
+        self.timer_label.pack(pady=10)
+
+        self.frage_label = tk.Label(
+            self.root,
+            text="",
+            wraplength=800,
+            font=("Arial", 20),
+            fg="white",
+            bg="#001f3f"
+        )
+        self.frage_label.pack(pady=20)
+
+        self.button_frame = tk.Frame(self.root, bg="#001f3f")
+        self.button_frame.pack()
+
+        for i in range(4):
+            btn = tk.Button(
+                self.button_frame,
+                text="",
+                width=38,
+                height=2,
+                font=("Arial", 14),
+                bg="#0074D9",
+                fg="white"
+            )
+            btn.grid(row=i // 2, column=i % 2, padx=15, pady=15)
+            self.antwort_buttons.append(btn)
+
+        self.joker_frame = tk.Frame(self.root, bg="#001f3f")
+        self.joker_frame.pack(pady=20)
+
+        self.joker1 = tk.Button(
+            self.joker_frame,
+            text="50:50 Joker",
+            font=("Arial", 14),
+            command=self.joker_5050_funktion
+        )
+        self.joker1.grid(row=0, column=0, padx=10)
+
+        self.joker2 = tk.Button(
+            self.joker_frame,
+            text="Anrufjoker",
+            font=("Arial", 14),
+            command=self.anrufjoker
+        )
+        self.joker2.grid(row=0, column=1, padx=10)
+
+        self.hilfe_label = tk.Label(
+            self.root,
+            text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker",
+            font=("Arial", 12),
+            fg="lightgray",
+            bg="#001f3f"
+        )
+        self.hilfe_label.pack(pady=5)
+
+        self.root.bind("<Key>", self.taste)
+
+    # =========================
+    # Spielstart pro Spieler
+    # =========================
+
+    def starte_spieler_runde(self):
+        if self.aktueller_spieler_index >= len(self.spieler_liste):
+            self.spiel_komplett_beenden()
+            return
+
+        aktueller = self.spieler_liste[self.aktueller_spieler_index]
+        self.spieler = aktueller["name"]
+        self.punkte = 0
+        self.frage_index = 0
+        self.timer_id = None
+        self.joker_5050 = True
+        self.joker_anruf = True
+        self.spiel_fragen = waehle_spiel_fragen()
+
+        self.joker1.config(state="normal")
+        self.joker2.config(state="normal")
+
+        messagebox.showinfo(
+            "Spielstart",
+            f"{self.spieler} ist dran!"
+        )
+
+        self.zeige_frage()
+
+    # =========================
+    # Timer
+    # =========================
+
+    def starte_timer(self):
+        self.timer -= 1
+        self.timer_label.config(text=f"Zeit: {self.timer}")
+
+        if self.timer <= 0:
+            self.timer_id = None
+            self.frage_label.config(
+                text="⏰ ZEIT VORBEI!\n\nDas Spiel endet."
+            )
+            messagebox.showerror(
+                "Zeit vorbei",
+                "Du warst zu langsam!"
+            )
+            self.root.after(1000, self.spieler_runde_beenden)
+        else:
+            self.timer_id = self.root.after(1000, self.starte_timer)
+
+    # =========================
+    # Frage anzeigen
+    # =========================
+
+    def zeige_frage(self):
+        if self.timer_id is not None:
+            self.root.after_cancel(self.timer_id)
+            self.timer_id = None
+
+        frage = self.spiel_fragen[self.frage_index]
+        schwierigkeitsgrad = frage_schwierigkeit(self.frage_index)
+
+        self.info_label.config(
+            text=f"Spieler: {self.spieler} | Modus: {self.modus} | Schwierigkeit: {schwierigkeitsgrad}"
+        )
+
+        self.punkte_label.config(text=f"Punkte: {self.punkte}")
+
+        self.frage_label.config(
+            text=f"Frage {self.frage_index + 1}/9:\n{frage['frage']}"
+        )
+
+        antworten = frage["antworten"][:]
+        random.shuffle(antworten)
+
+        for i in range(4):
+            self.antwort_buttons[i].config(
+                text=antworten[i],
+                state="normal",
+                bg="#0074D9",
+                command=lambda a=antworten[i]: self.pruefe_antwort(a)
+            )
+
+        self.timer = ZEITLIMIT[self.modus][schwierigkeitsgrad]
+        self.timer_label.config(text=f"Zeit: {self.timer}")
+
+        self.starte_timer()
+
+    # =========================
+    # Antwort prüfen
+    # =========================
+
+    def pruefe_antwort(self, auswahl):
+        if self.timer_id is not None:
+            self.root.after_cancel(self.timer_id)
+            self.timer_id = None
+
+        frage = self.spiel_fragen[self.frage_index]
+        richtige = frage["richtig"]
+        schwierigkeitsgrad = frage_schwierigkeit(self.frage_index)
+
+        for btn in self.antwort_buttons:
+            btn.config(state="disabled")
+
+        if auswahl == richtige:
+            self.punkte += PUNKTE[schwierigkeitsgrad]
+
+            for btn in self.antwort_buttons:
+                if btn["text"] == auswahl:
+                    btn.config(bg="green")
+
+            self.punkte_label.config(text=f"Punkte: {self.punkte}")
+
+            self.frage_label.config(
+                text=f"✅ RICHTIG!\n\n+{PUNKTE[schwierigkeitsgrad]} Punkte"
+            )
+
+            self.root.after(1200, self.naechste_frage)
+
+        else:
+            for btn in self.antwort_buttons:
+                if btn["text"] == auswahl:
+                    btn.config(bg="red")
+
+                if btn["text"] == richtige:
+                    btn.config(bg="green")
+
+            self.frage_label.config(
+                text=f"❌ FALSCH!\n\nRichtige Antwort: {richtige}"
+            )
+
+            self.root.after(1600, self.spieler_runde_beenden)
+
+    # =========================
+    # Nächste Frage
+    # =========================
+
+    def naechste_frage(self):
+        self.frage_index += 1
+
+        if self.frage_index >= len(self.spiel_fragen):
+            self.spieler_runde_beenden()
+        else:
+            self.zeige_frage()
+
+    # =========================
+    # Runde beenden
+    # =========================
+
+    def spieler_runde_beenden(self):
+        if self.timer_id is not None:
+            self.root.after_cancel(self.timer_id)
+            self.timer_id = None
+
+        self.spieler_liste[self.aktueller_spieler_index]["punkte"] = self.punkte
+
+        self.speichere_highscore(
+            self.spieler,
+            self.punkte,
+            self.modus
+        )
+
+        messagebox.showinfo(
+            "Runde beendet",
+            f"{self.spieler} hat {self.punkte} Punkte erreicht."
+        )
+
+        self.aktueller_spieler_index += 1
+        self.starte_spieler_runde()
+
+    # =========================
+    # Spiel komplett beenden
+    # =========================
+
+    def spiel_komplett_beenden(self):
+        ergebnis = "ENDERGEBNIS\n\n"
+
+        sortierte_spieler = sorted(
+            self.spieler_liste,
+            key=lambda x: x["punkte"],
+            reverse=True
+        )
+
+        for platz, spieler in enumerate(sortierte_spieler, start=1):
+            ergebnis += f"{platz}. {spieler['name']} - {spieler['punkte']} Punkte\n"
+
+        if len(sortierte_spieler) == 2:
+            if sortierte_spieler[0]["punkte"] > sortierte_spieler[1]["punkte"]:
+                ergebnis += f"\nGewinner: {sortierte_spieler[0]['name']}"
+            else:
+                ergebnis += "\nUnentschieden"
+
+        messagebox.showinfo(
+            "Spiel beendet",
+            ergebnis
+        )
+
+        self.zeige_highscores()
+        self.root.destroy()
+
+    # =========================
+    # 50:50 Joker
+    # =========================
+
+    def joker_5050_funktion(self):
+        if not self.joker_5050:
+            messagebox.showwarning(
+                "Joker",
+                "50:50 Joker wurde schon benutzt!"
+            )
+            return
+
+        frage = self.spiel_fragen[self.frage_index]
+        richtige = frage["richtig"]
+
+        falsche_buttons = []
+
+        for btn in self.antwort_buttons:
+            if btn["text"] != richtige and btn["state"] == "normal":
+                falsche_buttons.append(btn)
+
+        if len(falsche_buttons) >= 2:
+            entfernen = random.sample(falsche_buttons, 2)
+
+            for btn in entfernen:
+                btn.config(state="disabled", text="---")
+
+        self.joker_5050 = False
+        self.joker1.config(state="disabled")
+
+    # =========================
+    # Anrufjoker
+    # =========================
+
+    def anrufjoker(self):
+        if not self.joker_anruf:
+            messagebox.showwarning(
+                "Joker",
+                "Anrufjoker wurde schon benutzt!"
+            )
+            return
+
+        frage = self.spiel_fragen[self.frage_index]
+        richtige = frage["richtig"]
+
+        messagebox.showinfo(
+            "Anrufjoker",
+            f"Ich glaube, die richtige Antwort ist:\n{richtige}"
+        )
+
+        self.joker_anruf = False
+        self.joker2.config(state="disabled")
+
+    # =========================
+    # Tastenkombinationen
+    # =========================
+
+    def taste(self, event):
+        taste = event.char.lower()
+
+        if taste == "1":
+            self.antwort_buttons[0].invoke()
+        elif taste == "2":
+            self.antwort_buttons[1].invoke()
+        elif taste == "3":
+            self.antwort_buttons[2].invoke()
+        elif taste == "4":
+            self.antwort_buttons[3].invoke()
+        elif taste == "f":
+            self.joker_5050_funktion()
+        elif taste == "a":
+            self.anrufjoker()
+
+    # =========================
+    # Highscore
+    # =========================
+
+    def speichere_highscore(self, name, punkte, modus):
+        daten = lade_highscores()
+
+        daten.append({
+            "name": name,
+            "punkte": punkte,
+            "modus": modus
+        })
+
+        daten = sorted(
+            daten,
+            key=lambda x: x["punkte"],
+            reverse=True
+        )
+
+        speichere_highscores(daten)
+
+    def zeige_highscores(self):
+        daten = lade_highscores()
+
+        if not daten:
+            return
+
+        text = "RANGLISTE\n\n"
+
+        for eintrag in daten[:10]:
+            text += (
+                f"{eintrag['name']} - "
+                f"{eintrag['punkte']} Punkte "
+                f"({eintrag.get('modus', 'Fair')})\n"
+            )
+
+        messagebox.showinfo(
+            "Highscores",
+            text
+        )
+
+
+# =========================
+# Programmstart
 # =========================
 
 root = tk.Tk()
-root.title("QuizMaster - TH OWL & Herford Edition")
-root.geometry("900x700")
-root.configure(bg="#001f3f")
-
-# =========================
-# Benutzername
-# =========================
-
-spieler = simpledialog.askstring(
-    "Name",
-    "Bitte Namen eingeben:"
-)
-
-if not spieler:
-    spieler = "Gast"
-
-# =========================
-# Modus auswählen
-# =========================
-
-modus = simpledialog.askstring(
-    "Spielmodus",
-    "Wähle Modus: Fair oder Hard"
-)
-
-if modus not in ["Fair", "Hard"]:
-    modus = "Fair"
-
-# =========================
-# Variablen
-# =========================
-
-frage_index = 0
-punkte = 0
-timer = 0
-timer_id = None
-
-joker_5050 = True
-joker_anruf = True
-
-# =========================
-# Titel
-# =========================
-
-titel = tk.Label(
-    root,
-    text="QUIZMASTER",
-    font=("Arial", 30, "bold"),
-    fg="gold",
-    bg="#001f3f"
-)
-titel.pack(pady=15)
-
-untertitel = tk.Label(
-    root,
-    text="TH OWL & Herford Edition",
-    font=("Arial", 16, "bold"),
-    fg="white",
-    bg="#001f3f"
-)
-untertitel.pack()
-
-# =========================
-# Spielername und Modus
-# =========================
-
-spieler_label = tk.Label(
-    root,
-    text=f"Spieler: {spieler} | Modus: {modus}",
-    font=("Arial", 15),
-    fg="white",
-    bg="#001f3f"
-)
-spieler_label.pack(pady=10)
-
-# =========================
-# Punkte
-# =========================
-
-punkte_label = tk.Label(
-    root,
-    text="Punkte: 0",
-    font=("Arial", 16),
-    fg="white",
-    bg="#001f3f"
-)
-punkte_label.pack()
-
-# =========================
-# Timer
-# =========================
-
-timer_label = tk.Label(
-    root,
-    text="Zeit: 0",
-    font=("Arial", 18, "bold"),
-    fg="red",
-    bg="#001f3f"
-)
-timer_label.pack(pady=10)
-
-# =========================
-# Frage
-# =========================
-
-frage_label = tk.Label(
-    root,
-    text="",
-    wraplength=750,
-    font=("Arial", 20),
-    fg="white",
-    bg="#001f3f"
-)
-frage_label.pack(pady=25)
-
-# =========================
-# Antwortbuttons
-# =========================
-
-antwort_buttons = []
-
-button_frame = tk.Frame(root, bg="#001f3f")
-button_frame.pack()
-
-# =========================
-# Timer-Funktion
-# =========================
-
-def starte_timer():
-    global timer, timer_id
-
-    timer -= 1
-    timer_label.config(text=f"Zeit: {timer}")
-
-    if timer <= 0:
-        timer_id = None
-        messagebox.showerror(
-            "Zeit vorbei",
-            "Du warst zu langsam!"
-        )
-        spiel_ende()
-    else:
-        timer_id = root.after(1000, starte_timer)
-
-# =========================
-# Frage anzeigen
-# =========================
-
-def zeige_frage():
-    global timer, timer_id
-
-    if timer_id is not None:
-        root.after_cancel(timer_id)
-        timer_id = None
-
-    frage = spiel_fragen[frage_index]
-
-    frage_label.config(
-        text=f"Frage {frage_index + 1}/9:\n{frage['frage']}"
-    )
-
-    antworten = frage["antworten"][:]
-    random.shuffle(antworten)
-
-    for i in range(4):
-        antwort_buttons[i].config(
-            text=antworten[i],
-            state="normal",
-            bg="#0074D9",
-            command=lambda a=antworten[i]: pruefe_antwort(a)
-        )
-
-    if frage_index < 3:
-        timer = ZEITLIMIT[modus]["einfach"]
-    elif frage_index < 6:
-        timer = ZEITLIMIT[modus]["mittel"]
-    else:
-        timer = ZEITLIMIT[modus]["schwer"]
-
-    timer_label.config(text=f"Zeit: {timer}")
-    starte_timer()
-
-# =========================
-# Antwort prüfen
-# =========================
-
-def pruefe_antwort(auswahl):
-    global punkte, timer_id
-
-    if timer_id is not None:
-        root.after_cancel(timer_id)
-        timer_id = None
-
-    richtige = spiel_fragen[frage_index]["richtig"]
-
-    # Buttons kurz deaktivieren, damit man nicht mehrfach klickt
-    for btn in antwort_buttons:
-        btn.config(state="disabled")
-
-    if auswahl == richtige:
-        if frage_index < 3:
-            punkte += 10
-        elif frage_index < 6:
-            punkte += 20
-        else:
-            punkte += 30
-
-        print("RICHTIG!")
-
-        for btn in antwort_buttons:
-            if btn["text"] == auswahl:
-                btn.config(bg="green")
-
-        messagebox.showinfo(
-            "Richtig!",
-            "Sehr gut!"
-        )
-
-        punkte_label.config(text=f"Punkte: {punkte}")
-        root.after(1000, naechste_frage)
-
-    else:
-        print("FALSCH!")
-
-        for btn in antwort_buttons:
-            if btn["text"] == auswahl:
-                btn.config(bg="red")
-
-            if btn["text"] == richtige:
-                btn.config(bg="green")
-
-        messagebox.showerror(
-            "Falsch!",
-            f"Richtige Antwort: {richtige}"
-        )
-
-        punkte_label.config(text=f"Punkte: {punkte}")
-        root.after(1000, spiel_ende)
-
-# =========================
-# Nächste Frage
-# =========================
-
-def naechste_frage():
-    global frage_index
-
-    frage_index += 1
-
-    if frage_index >= len(spiel_fragen):
-        spiel_ende()
-    else:
-        zeige_frage()
-
-# =========================
-# Spielende
-# =========================
-
-def spiel_ende():
-    global timer_id
-
-    if timer_id is not None:
-        root.after_cancel(timer_id)
-        timer_id = None
-
-    speichere_highscore()
-
-    messagebox.showinfo(
-        "Spiel beendet",
-        f"{spieler} hat {punkte} Punkte erreicht!"
-    )
-
-    zeige_highscores()
-    root.destroy()
-
-# =========================
-# 50:50 Joker
-# =========================
-
-def joker_5050_funktion():
-    global joker_5050
-
-    if not joker_5050:
-        messagebox.showwarning(
-            "Joker",
-            "50:50 Joker schon benutzt!"
-        )
-        return
-
-    richtige = spiel_fragen[frage_index]["richtig"]
-
-    falsche_buttons = []
-
-    for btn in antwort_buttons:
-        if btn["text"] != richtige and btn["state"] == "normal":
-            falsche_buttons.append(btn)
-
-    if len(falsche_buttons) >= 2:
-        entfernen = random.sample(falsche_buttons, 2)
-
-        for btn in entfernen:
-            btn.config(state="disabled", text="---")
-
-    joker_5050 = False
-    joker1.config(state="disabled")
-
-# =========================
-# Anrufjoker
-# =========================
-
-def anrufjoker():
-    global joker_anruf
-
-    if not joker_anruf:
-        messagebox.showwarning(
-            "Joker",
-            "Anrufjoker schon benutzt!"
-        )
-        return
-
-    richtige = spiel_fragen[frage_index]["richtig"]
-
-    messagebox.showinfo(
-        "Anrufjoker",
-        f"Ich glaube die richtige Antwort ist:\n{richtige}"
-    )
-
-    joker_anruf = False
-    joker2.config(state="disabled")
-
-# =========================
-# Joker Buttons
-# =========================
-
-joker_frame = tk.Frame(root, bg="#001f3f")
-joker_frame.pack(pady=20)
-
-joker1 = tk.Button(
-    joker_frame,
-    text="50:50 Joker",
-    font=("Arial", 14),
-    command=joker_5050_funktion
-)
-joker1.grid(row=0, column=0, padx=10)
-
-joker2 = tk.Button(
-    joker_frame,
-    text="Anrufjoker",
-    font=("Arial", 14),
-    command=anrufjoker
-)
-joker2.grid(row=0, column=1, padx=10)
-
-# =========================
-# Antwortbuttons erstellen
-# =========================
-
-for i in range(4):
-    btn = tk.Button(
-        button_frame,
-        text="",
-        width=35,
-        height=2,
-        font=("Arial", 14),
-        bg="#0074D9",
-        fg="white"
-    )
-
-    btn.grid(row=i // 2, column=i % 2, padx=15, pady=15)
-    antwort_buttons.append(btn)
-
-# =========================
-# Tastenkombinationen
-# =========================
-
-def taste(event):
-    taste = event.char
-
-    if taste == "1":
-        antwort_buttons[0].invoke()
-
-    elif taste == "2":
-        antwort_buttons[1].invoke()
-
-    elif taste == "3":
-        antwort_buttons[2].invoke()
-
-    elif taste == "4":
-        antwort_buttons[3].invoke()
-
-    elif taste.lower() == "f":
-        joker_5050_funktion()
-
-    elif taste.lower() == "a":
-        anrufjoker()
-
-root.bind("<Key>", taste)
-
-# =========================
-# Highscore speichern
-# =========================
-
-def speichere_highscore():
-    daten = []
-
-    if os.path.exists(HIGHSCORE_DATEI):
-        try:
-            with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as f:
-                daten = json.load(f)
-        except json.JSONDecodeError:
-            daten = []
-
-    daten.append({
-        "name": spieler,
-        "punkte": punkte,
-        "modus": modus
-    })
-
-    daten = sorted(
-        daten,
-        key=lambda x: x["punkte"],
-        reverse=True
-    )
-
-    with open(HIGHSCORE_DATEI, "w", encoding="utf-8") as f:
-        json.dump(daten, f, indent=4, ensure_ascii=False)
-
-# =========================
-# Rangliste anzeigen
-# =========================
-
-def zeige_highscores():
-    if not os.path.exists(HIGHSCORE_DATEI):
-        return
-
-    try:
-        with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as f:
-            daten = json.load(f)
-    except json.JSONDecodeError:
-        return
-
-    text = "RANGLISTE\n\n"
-
-    for eintrag in daten[:10]:
-        text += (
-            f"{eintrag['name']} "
-            f"- {eintrag['punkte']} Punkte "
-            f"({eintrag.get('modus', 'Fair')})\n"
-        )
-
-    messagebox.showinfo(
-        "Highscores",
-        text
-    )
-
-# =========================
-# Spiel starten
-# =========================
-
-zeige_frage()
-
+app = QuizMaster(root)
 root.mainloop()

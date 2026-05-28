@@ -1,5 +1,10 @@
 [
     {
+        "name": "helina",
+        "punkte": 120,
+        "modus": "Hard"
+    },
+    {
         "name": "helin",
         "punkte": 70
     },
