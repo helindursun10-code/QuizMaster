@@ -359,8 +359,8 @@ def frage_schwierigkeit(frage_index):
 # =========================
 
 class QuizMaster:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, fenster):
+        self.root = fenster
         self.root.title("QuizMaster - TH OWL & Herford Edition")
         self.root.geometry("950x720")
         self.root.configure(bg="#001f3f")

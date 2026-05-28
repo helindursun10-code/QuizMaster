@@ -20,6 +20,11 @@
     },
     {
         "name": "helin",
+        "punkte": 30,
+        "modus": "Fair"
+    },
+    {
+        "name": "helin",
         "punkte": 20,
         "modus": "Fair"
     },
