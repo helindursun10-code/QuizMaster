@@ -487,7 +487,7 @@ class QuizMaster:
         self.button_frame.pack()
 
         for i in range(4):
-            btn = tk.Button(
+            btn = tk.Label(
                 self.button_frame,
                 text="",
                 width=38,
@@ -495,10 +495,9 @@ class QuizMaster:
                 font=("Arial", 14, "bold"),
                 bg="#004C99",
                 fg="white",
-                activebackground="#0066CC",
-                activeforeground="white",
                 relief="raised",
-                bd=4
+                bd=4,
+                cursor="hand2"
             )
             btn.grid(row=i // 2, column=i % 2, padx=15, pady=15)
             self.antwort_buttons.append(btn)
@@ -611,12 +610,14 @@ class QuizMaster:
         for i in range(4):
             self.antwort_buttons[i].config(
                 text=antworten[i],
-                state="normal",
                 bg="#004C99",
                 fg="white",
-                activebackground="#0066CC",
-                activeforeground="white",
-                command=lambda a=antworten[i]: self.pruefe_antwort(a)
+                cursor="hand2"
+            )
+
+            self.antwort_buttons[i].bind(
+                "<Button-1>",
+                lambda event, a=antworten[i]: self.pruefe_antwort(a)
             )
 
         self.timer = ZEITLIMIT[self.modus][schwierigkeitsgrad]
@@ -638,7 +639,8 @@ class QuizMaster:
         schwierigkeitsgrad = frage_schwierigkeit(self.frage_index)
 
         for btn in self.antwort_buttons:
-            btn.config(state="disabled")
+            btn.unbind("<Button-1>")
+            btn.config(cursor="")
 
         if auswahl == richtige:
             self.punkte += PUNKTE[schwierigkeitsgrad]
@@ -754,14 +756,15 @@ class QuizMaster:
         falsche_buttons = []
 
         for btn in self.antwort_buttons:
-            if btn["text"] != richtige and btn["state"] == "normal":
+            if btn["text"] != richtige and btn["text"] != "---":
                 falsche_buttons.append(btn)
 
         if len(falsche_buttons) >= 2:
             entfernen = random.sample(falsche_buttons, 2)
 
             for btn in entfernen:
-                btn.config(state="disabled", text="---")
+                btn.unbind("<Button-1>")
+                btn.config(text="---", bg="#555555", cursor="")
 
         self.joker_5050 = False
         self.joker1.config(state="disabled")
