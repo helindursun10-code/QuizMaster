@@ -492,9 +492,13 @@ class QuizMaster:
                 text="",
                 width=38,
                 height=2,
-                font=("Arial", 14),
-                bg="#0074D9",
-                fg="white"
+                font=("Arial", 14, "bold"),
+                bg="#004C99",
+                fg="white",
+                activebackground="#0066CC",
+                activeforeground="white",
+                relief="raised",
+                bd=4
             )
             btn.grid(row=i // 2, column=i % 2, padx=15, pady=15)
             self.antwort_buttons.append(btn)
@@ -520,14 +524,15 @@ class QuizMaster:
 
         self.hilfe_label = tk.Label(
             self.root,
-            text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker",
+            text="Bedienung: Antwort anklicken oder Taste 1-4 nutzen | F = 50:50-Joker | A = Anrufjoker",
             font=("Arial", 12),
-            fg="lightgray",
+            fg="white",
             bg="#001f3f"
         )
         self.hilfe_label.pack(pady=5)
 
         self.root.bind("<Key>", self.taste)
+        self.root.focus_set()
 
     # =========================
     # Spielstart pro Spieler
@@ -607,7 +612,10 @@ class QuizMaster:
             self.antwort_buttons[i].config(
                 text=antworten[i],
                 state="normal",
-                bg="#0074D9",
+                bg="#004C99",
+                fg="white",
+                activebackground="#0066CC",
+                activeforeground="white",
                 command=lambda a=antworten[i]: self.pruefe_antwort(a)
             )
 

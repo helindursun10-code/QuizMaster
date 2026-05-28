@@ -12,5 +12,15 @@
         "name": "helin",
         "punkte": 50,
         "modus": "Fair"
+    },
+    {
+        "name": "Helin",
+        "punkte": 0,
+        "modus": "Hard"
+    },
+    {
+        "name": "helin",
+        "punkte": 0,
+        "modus": "Fair"
     }
 ]
