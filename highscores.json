@@ -2,5 +2,10 @@
     {
         "name": "helin",
         "punkte": 70
+    },
+    {
+        "name": "helin",
+        "punkte": 50,
+        "modus": "Fair"
     }
 ]
