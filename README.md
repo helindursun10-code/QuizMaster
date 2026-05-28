@@ -23,8 +23,7 @@ Dabei sollen typische Elemente eines Quizspiels umgesetzt werden, zum Beispiel F
 - 3 einfache Fragen
 - 3 mittlere Fragen
 - 3 schwere Fragen
-- 50:50-Joker
-- Anrufjoker
+- 50:50 Joker
 - Hinweis Joker
 - Tausch Joker
 - Timer Joker
