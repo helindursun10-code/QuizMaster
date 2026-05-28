@@ -25,6 +25,9 @@ Dabei sollen typische Elemente eines Quizspiels umgesetzt werden, zum Beispiel F
 - 3 schwere Fragen
 - 50:50-Joker
 - Anrufjoker
+- Hinweis Joker
+- Tausch Joker
+- Timer Joker
 - jeder Joker nur einmal pro Spiel
 - Zeitlimit pro Frage
 - Benutzername
@@ -48,8 +51,9 @@ Bei einer falschen Antwort endet das Spiel.
 ## Joker
 Im Spiel gibt es zwei Joker:
 - 50:50-Joker: Zwei falsche Antworten werden entfernt.
-- Anrufjoker: Der Spieler erhält einen Tipp.
-Jeder Joker kann nur einmal pro Spiel verwendet werden.
+- Hinweis Joker: Tipp für das Lösungswort
+- Tausch Joker: Frage mit einer anderen aus der selben Kategorie tauschen
+- Timer Joker: +10 Sekunden extar Zeit 
 
 ## Zeitlimit
 Für jede Frage gibt es ein Zeitlimit.  
