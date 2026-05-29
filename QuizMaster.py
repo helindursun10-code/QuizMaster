@@ -530,8 +530,8 @@ class QuizMaster:
         )
         self.hilfe_label.pack(pady=5)
 
-        self.root.bind("<Key>", self.taste)
-        self.root.focus_set()
+        self.root.bind_all("<Key>", self.taste)
+        self.root.focus_force()
 
     # =========================
     # Spielstart pro Spieler
@@ -799,16 +799,16 @@ class QuizMaster:
     def taste(self, event):
         taste = event.char.lower()
 
-        if taste == "1":
-            self.antwort_buttons[0].invoke()
-        elif taste == "2":
-            self.antwort_buttons[1].invoke()
-        elif taste == "3":
-            self.antwort_buttons[2].invoke()
-        elif taste == "4":
-            self.antwort_buttons[3].invoke()
+        if taste in ["1", "2", "3", "4"]:
+            index = int(taste) - 1
+            antwort = self.antwort_buttons[index]["text"]
+
+            if antwort != "---" and antwort != "":
+                self.pruefe_antwort(antwort)
+
         elif taste == "f":
             self.joker_5050_funktion()
+
         elif taste == "a":
             self.anrufjoker()
 

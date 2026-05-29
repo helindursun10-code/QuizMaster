@@ -1,8 +1,18 @@
 [
     {
+        "name": "helin",
+        "punkte": 150,
+        "modus": "Fair"
+    },
+    {
         "name": "helina",
         "punkte": 120,
         "modus": "Hard"
+    },
+    {
+        "name": "helin",
+        "punkte": 120,
+        "modus": "Fair"
     },
     {
         "name": "helin",
@@ -21,6 +31,11 @@
     {
         "name": "helin",
         "punkte": 30,
+        "modus": "Fair"
+    },
+    {
+        "name": "helin",
+        "punkte": 20,
         "modus": "Fair"
     },
     {
