@@ -49,9 +49,19 @@
         "modus": "Fair"
     },
     {
+        "name": "helin",
+        "punkte": 10,
+        "modus": "Fair"
+    },
+    {
         "name": "Helin",
         "punkte": 0,
         "modus": "Hard"
+    },
+    {
+        "name": "helin",
+        "punkte": 0,
+        "modus": "Fair"
     },
     {
         "name": "helin",

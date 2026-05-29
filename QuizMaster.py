@@ -376,6 +376,8 @@ class QuizMaster:
 
         self.joker_5050 = True
         self.joker_anruf = True
+        self.joker_zeit = True
+        self.joker_switch = True
 
         self.antwort_buttons = []
 
@@ -565,10 +567,14 @@ class QuizMaster:
         self.timer_id = None
         self.joker_5050 = True
         self.joker_anruf = True
+        self.joker_zeit = True
+        self.joker_switch = True
         self.spiel_fragen = waehle_spiel_fragen()
 
         self.joker1.config(state="normal")
         self.joker2.config(state="normal")
+        self.joker3.config(state="normal")
+        self.joker4.config(state="normal")
 
         messagebox.showinfo(
             "Spielstart",
@@ -631,6 +637,7 @@ class QuizMaster:
                 cursor="hand2"
             )
 
+            self.antwort_buttons[i].unbind("<Button-1>")
             self.antwort_buttons[i].bind(
                 "<Button-1>",
                 lambda event, a=antworten[i]: self.pruefe_antwort(a)
