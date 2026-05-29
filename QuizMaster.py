@@ -521,9 +521,25 @@ class QuizMaster:
         )
         self.joker2.grid(row=0, column=1, padx=10)
 
+        self.joker3 = tk.Button(
+            self.joker_frame,
+            text="Zeitjoker +10s",
+            font=("Arial", 14),
+            command=self.zeitjoker
+        )
+        self.joker3.grid(row=0, column=2, padx=10)
+
+        self.joker4 = tk.Button(
+            self.joker_frame,
+            text="Frage wechseln",
+            font=("Arial", 14),
+            command=self.frage_wechseln_joker
+        )
+        self.joker4.grid(row=0, column=3, padx=10)
+
         self.hilfe_label = tk.Label(
             self.root,
-            text="Bedienung: Antwort anklicken oder Taste 1-4 nutzen | F = 50:50-Joker | A = Anrufjoker",
+            text="Bedienung: Antwort anklicken oder Taste 1-4 nutzen | F = 50:50 | A = Anruf | Z = Zeit | W = Wechsel",
             font=("Arial", 12),
             fg="white",
             bg="#001f3f"
@@ -792,6 +808,62 @@ class QuizMaster:
         self.joker_anruf = False
         self.joker2.config(state="disabled")
 
+    def zeitjoker(self):
+        if not self.joker_zeit:
+            messagebox.showwarning(
+                "Joker",
+                "Zeitjoker wurde schon benutzt!"
+            )
+            return
+
+        self.timer += 10
+        self.timer_label.config(text=f"Zeit: {self.timer}")
+
+        self.joker_zeit = False
+        self.joker3.config(state="disabled")
+
+        messagebox.showinfo(
+            "Zeitjoker",
+            "Du hast 10 Sekunden extra bekommen!"
+        )
+
+    def frage_wechseln_joker(self):
+        if not self.joker_switch:
+            messagebox.showwarning(
+                "Joker",
+                "Frage-wechseln-Joker wurde schon benutzt!"
+            )
+            return
+
+        schwierigkeitsgrad = frage_schwierigkeit(self.frage_index)
+
+        moegliche_fragen = []
+
+        for frage in fragen[schwierigkeitsgrad]:
+            if frage not in self.spiel_fragen:
+                moegliche_fragen.append(frage)
+
+        if not moegliche_fragen:
+            messagebox.showwarning(
+                "Joker",
+                "Keine weitere Frage auf diesem Niveau verfügbar!"
+            )
+            return
+
+        neue_frage = random.choice(moegliche_fragen)
+        self.spiel_fragen[self.frage_index] = neue_frage
+
+        self.joker_switch = False
+        self.joker4.config(state="disabled")
+
+        messagebox.showinfo(
+            "Frage wechseln",
+            "Die Frage wurde durch eine neue Frage im gleichen Niveau ersetzt."
+        )
+
+        self.zeige_frage()
+
+
     # =========================
     # Tastenkombinationen
     # =========================
@@ -811,6 +883,12 @@ class QuizMaster:
 
         elif taste == "a":
             self.anrufjoker()
+
+        elif taste == "z":
+            self.zeitjoker()
+
+        elif taste == "w":
+            self.frage_wechseln_joker()
 
     # =========================
     # Highscore
