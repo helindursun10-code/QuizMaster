@@ -322,6 +322,8 @@ fragen = {
 # =========================
 
 def lade_highscores():
+    # Wenn noch keine Highscore-Datei existiert,
+    # wird eine leere Liste zurückgegeben.
     if not os.path.exists(HIGHSCORE_DATEI):
         return []
 
@@ -333,6 +335,8 @@ def lade_highscores():
 
 
 def speichere_highscores(daten):
+    # Speichert die Highscores dauerhaft in einer JSON-Datei.
+    # Dadurch bleiben sie auch nach einem Neustart erhalten.
     with open(HIGHSCORE_DATEI, "w", encoding="utf-8") as datei:
         json.dump(daten, datei, indent=4, ensure_ascii=False)
 
@@ -349,6 +353,8 @@ def waehle_spiel_fragen():
 
 
 def frage_schwierigkeit(frage_index):
+    # Die Schwierigkeit hängt von der Position der Frage ab.
+    # Frage 1-3: einfach, Frage 4-6: mittel, Frage 7-9: schwer.
     if frage_index < 3:
         return "einfach"
     elif frage_index < 6:
@@ -591,6 +597,9 @@ class QuizMaster:
     # =========================
 
     def starte_timer(self):
+        # Der Timer zählt jede Sekunde herunter.
+        # Wenn die Zeit abgelaufen ist, endet die Runde.
+
         self.timer -= 1
         self.timer_label.config(text=f"Zeit: {self.timer}")
 
@@ -612,6 +621,10 @@ class QuizMaster:
     # =========================
 
     def zeige_frage(self):
+        # Diese Funktion zeigt die aktuelle Frage an.
+        # Außerdem werden die Antworten zufällig gemischt
+        # und der Timer passend zur Schwierigkeit gestartet.
+
         if self.timer_id is not None:
             self.root.after_cancel(self.timer_id)
             self.timer_id = None
@@ -712,6 +725,10 @@ class QuizMaster:
         )
 
     def pruefe_antwort(self, auswahl):
+        # Diese Funktion prüft, ob die ausgewählte Antwort richtig ist.
+        # Bei richtiger Antwort gibt es Punkte.
+        # Bei falscher Antwort endet die Runde.
+
         if self.timer_id is not None:
             self.root.after_cancel(self.timer_id)
             self.timer_id = None
@@ -984,6 +1001,9 @@ class QuizMaster:
     # =========================
 
     def speichere_highscore(self, name, punkte, modus):
+        # Der aktuelle Punktestand wird zur Rangliste hinzugefügt.
+        # Danach wird die Rangliste nach Punkten sortiert und gespeichert.
+
         daten = lade_highscores()
 
         daten.append({
