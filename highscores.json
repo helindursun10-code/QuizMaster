@@ -16,6 +16,11 @@
     },
     {
         "name": "helin",
+        "punkte": 120,
+        "modus": "Fair"
+    },
+    {
+        "name": "helin",
         "punkte": 70
     },
     {

@@ -797,6 +797,7 @@ class QuizMaster:
     # =========================
 
     def anrufjoker(self):
+        # Der Anrufjoker darf nur einmal pro Spieler benutzt werden.
         if not self.joker_anruf:
             messagebox.showwarning(
                 "Joker",
@@ -807,11 +808,21 @@ class QuizMaster:
         frage = self.spiel_fragen[self.frage_index]
         richtige = frage["richtig"]
 
+        # Der Anrufjoker verrät nicht direkt die richtige Antwort.
+        # Stattdessen bekommt der Spieler einen kleinen Hinweis.
+        hinweise = [
+            f"Die richtige Antwort beginnt mit dem Buchstaben: {richtige[0]}",
+            f"Die richtige Antwort besteht aus {len(richtige.split())} Wort/Wörtern.",
+            f"Die richtige Antwort passt am besten zum Thema TH OWL / Herford.",
+            f"Ich bin mir nicht ganz sicher, aber ich würde die fachlich passendste Antwort nehmen."
+        ]
+
         messagebox.showinfo(
             "Anrufjoker",
-            f"Ich glaube, die richtige Antwort ist:\n{richtige}"
+            "📞 Dein Anrufjoker sagt:\n\n" + random.choice(hinweise)
         )
 
+        # Joker wird nach Benutzung deaktiviert.
         self.joker_anruf = False
         self.joker2.config(state="disabled")
 
