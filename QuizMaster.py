@@ -338,6 +338,9 @@ def speichere_highscores(daten):
 
 
 def waehle_spiel_fragen():
+    # Für jede Spielrunde werden zufällig 3 einfache,
+    # 3 mittlere und 3 schwere Fragen ausgewählt.
+    # Dadurch ist jede Runde etwas anders.
     return (
         random.sample(fragen["einfach"], 3) +
         random.sample(fragen["mittel"], 3) +
