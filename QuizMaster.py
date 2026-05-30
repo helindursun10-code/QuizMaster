@@ -273,7 +273,10 @@ def zeige_highscores():
     daten = lade_highscores()
 
     if not daten:
-        messagebox.showinfo("Rangliste", "Noch keine Highscores vorhanden.")
+        messagebox.showinfo(
+            "Rangliste",
+            "Noch keine Highscores vorhanden.\nSpiele zuerst eine Runde."
+        )
         return
 
     text = "RANGLISTE\n\n"
@@ -627,7 +630,14 @@ def starte_timer():
 
 
 def pruefe_antwort(auswahl):
-    global punkte, frage_index, timer_id
+    global punkte, frage_index, timer_id, antwort_gesperrt
+
+    # Falls schon geantwortet wurde, passiert nichts mehr.
+    # So bleiben die Buttons sichtbar und müssen nicht deaktiviert werden.
+    if antwort_gesperrt:
+        return
+
+    antwort_gesperrt = True
 
     if timer_id is not None:
         root.after_cancel(timer_id)
@@ -637,9 +647,10 @@ def pruefe_antwort(auswahl):
     richtige_antwort = frage["richtig"]
     schwierigkeitsgrad = aktuelle_schwierigkeit()
 
-    # Nach einer Antwort werden alle Buttons deaktiviert.
+    # Nach einer Antwort werden nur die Klick-Funktionen entfernt.
+    # Die Farben bleiben sichtbar.
     for button in antwort_buttons:
-        button.config(state="disabled")
+        button.config(command=lambda: None)
 
     if auswahl == richtige_antwort:
         punkte += PUNKTE[schwierigkeitsgrad]
@@ -647,7 +658,7 @@ def pruefe_antwort(auswahl):
 
         for button in antwort_buttons:
             if button["text"] == auswahl:
-                button.config(bg="green")
+                button.config(bg="green", fg="white")
 
         zeige_effekt(True)
 
@@ -663,10 +674,10 @@ def pruefe_antwort(auswahl):
     else:
         for button in antwort_buttons:
             if button["text"] == auswahl:
-                button.config(bg="red")
+                button.config(bg="red", fg="white")
 
             if button["text"] == richtige_antwort:
-                button.config(bg="green")
+                button.config(bg="green", fg="white")
 
         zeige_effekt(False)
 
@@ -747,12 +758,17 @@ def joker_5050():
     falsche_buttons = []
 
     for button in antwort_buttons:
-        if button["text"] != richtige_antwort:
+        if button["text"] != richtige_antwort and button["text"] != "---":
             falsche_buttons.append(button)
 
     # Zwei falsche Antworten werden entfernt.
     for button in random.sample(falsche_buttons, 2):
-        button.config(text="---", state="disabled", bg="#555555")
+        button.config(
+            text="---",
+            bg="#333333",
+            fg="white",
+            command=lambda: None
+        )
 
     joker_5050_verfuegbar = False
     joker_5050_button.config(state="disabled")
@@ -800,6 +816,42 @@ def zeitjoker():
 
     messagebox.showinfo("Zeitjoker", "Du hast 10 Sekunden extra bekommen!")
 
+def frage_wechseln_joker():
+    global joker_switch_verfuegbar, spiel_fragen
+
+    if not joker_switch_verfuegbar:
+        messagebox.showwarning("Joker", "Frage-wechseln-Joker wurde schon benutzt!")
+        return
+
+    schwierigkeitsgrad = aktuelle_schwierigkeit()
+
+    moegliche_fragen = []
+
+    # Es wird eine neue Frage mit derselben Schwierigkeit gesucht.
+    for frage in fragen[schwierigkeitsgrad]:
+        if frage not in spiel_fragen:
+            moegliche_fragen.append(frage)
+
+    if not moegliche_fragen:
+        messagebox.showwarning(
+            "Joker",
+            "Keine weitere Frage auf diesem Niveau verfügbar!"
+        )
+        return
+
+    neue_frage = random.choice(moegliche_fragen)
+    spiel_fragen[frage_index] = neue_frage
+
+    joker_switch_verfuegbar = False
+    joker_switch_button.config(state="disabled")
+
+    messagebox.showinfo(
+        "Frage wechseln",
+        "Die Frage wurde durch eine neue Frage im gleichen Schwierigkeitsgrad ersetzt."
+    )
+
+    zeige_frage()
+
 
 # =========================
 # Tastatursteuerung
@@ -812,7 +864,7 @@ def taste(event):
         index = int(taste) - 1
         antwort = antwort_buttons[index]["text"]
 
-        if antwort != "---" and antwort_buttons[index]["state"] != "disabled":
+        if antwort != "---":
             pruefe_antwort(antwort)
 
     elif taste == "f":
@@ -823,6 +875,9 @@ def taste(event):
 
     elif taste == "z":
         zeitjoker()
+
+    elif taste == "w":
+        frage_wechseln_joker()
 
 
 # =========================
