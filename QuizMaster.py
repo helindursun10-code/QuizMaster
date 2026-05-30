@@ -222,6 +222,11 @@ timer_id = None
 joker_5050_verfuegbar = True
 joker_anruf_verfuegbar = True
 joker_zeit_verfuegbar = True
+joker_switch_verfuegbar = True
+
+# Verhindert, dass man nach einer Antwort nochmal klicken kann.
+# Die Buttons bleiben aber farbig und lesbar.
+antwort_gesperrt = False
 
 antwort_buttons = []
 
@@ -306,15 +311,18 @@ def aktuelle_schwierigkeit():
 
 
 def reset_joker():
-    global joker_5050_verfuegbar, joker_anruf_verfuegbar, joker_zeit_verfuegbar
+    global joker_5050_verfuegbar, joker_anruf_verfuegbar
+    global joker_zeit_verfuegbar, joker_switch_verfuegbar
 
     joker_5050_verfuegbar = True
     joker_anruf_verfuegbar = True
     joker_zeit_verfuegbar = True
+    joker_switch_verfuegbar = True
 
     joker_5050_button.config(state="normal")
     joker_anruf_button.config(state="normal")
     joker_zeit_button.config(state="normal")
+    joker_switch_button.config(state="normal")
 
 
 # =========================
@@ -474,7 +482,7 @@ highscore_button.pack(pady=5)
 
 hilfe_label = tk.Label(
     root,
-    text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker | Z = Zeitjoker",
+    text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker | Z = Zeitjoker | W = Frage wechseln",
     font=("Arial", 12),
     fg="white",
     bg="#001f3f"
@@ -559,7 +567,10 @@ def starte_spieler_runde():
 
 
 def zeige_frage():
-    global timer, timer_id
+    global timer, timer_id, antwort_gesperrt
+
+    # Bei jeder neuen Frage darf wieder geantwortet werden.
+    antwort_gesperrt = False
 
     # Alte Timer werden gestoppt, damit nicht mehrere Timer gleichzeitig laufen.
     if timer_id is not None:
@@ -588,6 +599,8 @@ def zeige_frage():
             text=antworten[i],
             bg="#004C99",
             fg="white",
+            activebackground="#0066CC",
+            activeforeground="white",
             state="normal",
             command=lambda antwort=antworten[i]: pruefe_antwort(antwort)
         )

@@ -39,6 +39,11 @@
         "modus": "Fair"
     },
     {
+        "name": "h",
+        "punkte": 50,
+        "modus": "Fair"
+    },
+    {
         "name": "helin",
         "punkte": 30,
         "modus": "Fair"
