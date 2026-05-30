@@ -652,6 +652,62 @@ class QuizMaster:
     # Antwort prüfen
     # =========================
 
+    def effekt_anzeigen(self, richtig):
+        # Diese Funktion zeigt einen deutlicheren Effekt nach einer Antwort.
+        # Der Hintergrund blinkt kurz und ein Ton wird abgespielt.
+
+        alte_farbe = "#001f3f"
+
+        if richtig:
+            effekt_farbe = "#0b5c0b"  # dunkelgrün
+            text = "✅ RICHTIG!"
+        else:
+            effekt_farbe = "#7a0000"  # dunkelrot
+            text = "❌ FALSCH!"
+
+        # Einfacher Soundeffekt über Tkinter.
+        self.root.bell()
+
+        # Hintergrund kurz verändern.
+        self.root.configure(bg=effekt_farbe)
+        self.titel.config(bg=effekt_farbe)
+        self.untertitel.config(bg=effekt_farbe)
+        self.info_label.config(bg=effekt_farbe)
+        self.punkte_label.config(bg=effekt_farbe)
+        self.timer_label.config(bg=effekt_farbe)
+        self.frage_label.config(bg=effekt_farbe)
+        self.button_frame.config(bg=effekt_farbe)
+        self.joker_frame.config(bg=effekt_farbe)
+        self.hilfe_label.config(bg=effekt_farbe)
+
+        self.frage_label.config(
+            text=text,
+            font=("Arial", 28, "bold")
+        )
+
+        # Nach 500 Millisekunden wieder normale Farbe setzen.
+        self.root.after(500, self.farbe_zuruecksetzen)
+
+    def farbe_zuruecksetzen(self):
+        # Setzt die Oberfläche nach dem Effekt wieder auf die normale Farbe zurück.
+
+        normale_farbe = "#001f3f"
+
+        self.root.configure(bg=normale_farbe)
+        self.titel.config(bg=normale_farbe)
+        self.untertitel.config(bg=normale_farbe)
+        self.info_label.config(bg=normale_farbe)
+        self.punkte_label.config(bg=normale_farbe)
+        self.timer_label.config(bg=normale_farbe)
+        self.frage_label.config(bg=normale_farbe)
+        self.button_frame.config(bg=normale_farbe)
+        self.joker_frame.config(bg=normale_farbe)
+        self.hilfe_label.config(bg=normale_farbe)
+
+        self.frage_label.config(
+            font=("Arial", 20)
+        )
+
     def pruefe_antwort(self, auswahl):
         if self.timer_id is not None:
             self.root.after_cancel(self.timer_id)
@@ -674,11 +730,14 @@ class QuizMaster:
 
             self.punkte_label.config(text=f"Punkte: {self.punkte}")
 
+            # Deutlicher Effekt bei richtiger Antwort.
+            self.effekt_anzeigen(True)
+
             self.frage_label.config(
                 text=f"✅ RICHTIG!\n\n+{PUNKTE[schwierigkeitsgrad]} Punkte"
             )
 
-            self.root.after(1200, self.naechste_frage)
+            self.root.after(1400, self.naechste_frage)
 
         else:
             for btn in self.antwort_buttons:
