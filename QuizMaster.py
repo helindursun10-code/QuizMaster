@@ -739,19 +739,28 @@ class QuizMaster:
 
             self.root.after(1400, self.naechste_frage)
 
+
         else:
+
             for btn in self.antwort_buttons:
+
                 if btn["text"] == auswahl:
                     btn.config(bg="red")
 
                 if btn["text"] == richtige:
                     btn.config(bg="green")
 
+            # Deutlicher Effekt bei falscher Antwort.
+
+            self.effekt_anzeigen(False)
+
             self.frage_label.config(
+
                 text=f"❌ FALSCH!\n\nRichtige Antwort: {richtige}"
+
             )
 
-            self.root.after(1600, self.spieler_runde_beenden)
+            self.root.after(1800, self.spieler_runde_beenden)
 
     # =========================
     # Nächste Frage
