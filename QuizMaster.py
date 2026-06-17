@@ -362,6 +362,13 @@ def start_abfragen():
         "Wähle Modus: Fair oder Hard:"
     )
 
+    # Die Eingabe wird bereinigt, damit auch "fair", "FAIR" oder Leerzeichen funktionieren.
+    # Wenn die Eingabe ungültig ist, wird automatisch der Fair-Mode genutzt.
+    if not gewaehlter_modus:
+        gewaehlter_modus = "Fair"
+    else:
+        gewaehlter_modus = gewaehlter_modus.strip().capitalize()
+
     if gewaehlter_modus not in ["Fair", "Hard"]:
         gewaehlter_modus = "Fair"
 
