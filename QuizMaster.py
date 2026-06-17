@@ -473,12 +473,6 @@ joker_zeit_button = tk.Button(
     font=("Arial", 14),
     command=lambda: zeitjoker()
 )
-joker_zeit_button = tk.Button(
-    joker_frame,
-    text="Zeitjoker +10s",
-    font=("Arial", 14),
-    command=lambda: zeitjoker()
-)
 joker_zeit_button.grid(row=0, column=2, padx=10)
 
 joker_switch_button = tk.Button(
