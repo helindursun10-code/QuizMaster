@@ -623,17 +623,22 @@ def zeige_frage():
 
 
 def starte_timer():
-    global timer, timer_id
+    global timer, timer_id, antwort_gesperrt
 
-    timer -= 1
     timer_label.config(text=f"Zeit: {timer}")
 
     if timer <= 0:
+        antwort_gesperrt = True
         timer_id = None
+
+        for button in antwort_buttons:
+            button.config(command=lambda: None)
+
         frage_label.config(text="⏰ ZEIT VORBEI!\n\nDas Spiel endet.")
         messagebox.showerror("Zeit vorbei", "Du warst zu langsam!")
         root.after(1000, spieler_runde_beenden)
     else:
+        timer -= 1
         timer_id = root.after(1000, starte_timer)
 
 
