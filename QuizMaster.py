@@ -51,7 +51,8 @@ fragen = {
                 "Ost-West-Lehre",
                 "Oldenburg-Weser"
             ],
-            "richtig": "Technische Hochschule Ostwestfalen-Lippe"
+            "richtig": "Technische Hochschule Ostwestfalen-Lippe",
+            "hinweis": "Ich glaube OWL steht für Ostwestfalen-Lippe."
         },
         {
             "frage": "Wie heißt der TH-OWL-Lernort in Herford?",
@@ -61,7 +62,8 @@ fragen = {
                 "BildungsCampus",
                 "Sustainable Campus"
             ],
-            "richtig": "BildungsCampus"
+            "richtig": "BildungsCampus",
+            "hinweis": "Der Name beschriebt klar den Fokus auf Lehre und Studium in Herford."
         },
         {
             "frage": "In welchem Bundesland liegt Herford?",
@@ -71,7 +73,8 @@ fragen = {
                 "NRW",
                 "Niedersachsen"
             ],
-            "richtig": "NRW"
+            "richtig": "NRW",
+            "hinweis": "Es ist das bevölkerungsriechste BUndesland Deutschlands."
         },
         {
             "frage": "In welcher Stadt befindet sich der BildungsCampus der TH OWL?",
@@ -81,7 +84,8 @@ fragen = {
                 "Minden",
                 "Höxter"
             ],
-            "richtig": "Herford"
+            "richtig": "Herford",
+            "hinweis": " ich weiss das Lemgo, Detmold und Höxter Hauptstandorte sind."
         },
         {
             "frage": "Wie nennt sich die Stadt Herford offiziell?",
@@ -91,7 +95,8 @@ fragen = {
                 "Kurstadt Herford",
                 "Hansestadt Herford"
             ],
-            "richtig": "Hansestadt Herford"
+            "richtig": "Hansestadt Herford",
+            "hinweis": "Der Name geht auf einen mittelalterlichen Städtebund zurück, der für Handel und Wirtschaft wichtig war."
         }
     ],
 
@@ -104,7 +109,8 @@ fragen = {
                 "Digital Innovation Management",
                 "Business Information Systems"
             ],
-            "richtig": "Digital Management Solutions"
+            "richtig": "Digital Management Solutions",
+            "hinweis": "Die Abkürzung von dem Studiengang ist DiMS."
         },
         {
             "frage": "Welche drei Orte nennt die TH OWL als Hauptstandorte?",
@@ -114,7 +120,8 @@ fragen = {
                 "Lemgo, Herford und Minden",
                 "Detmold, Herford und Höxter"
             ],
-            "richtig": "Lemgo, Detmold und Höxter"
+            "richtig": "Lemgo, Detmold und Höxter",
+            "hinweis": "Die Hauptsandorte sind Campusstandorte, die nicht gesuchten Orte sind für Lern- oder Projektstandorte."
         },
         {
             "frage": "Welcher Campusname gehört zur TH OWL in Lemgo?",
@@ -124,7 +131,8 @@ fragen = {
                 "Innovation Campus",
                 "RailCampus"
             ],
-            "richtig": "Innovation Campus"
+            "richtig": "Innovation Campus",
+            "hinweis": "In Lemgo gibt es ein InnovationSPIN"
         },
         {
             "frage": "Welche Aussage passt zum Studienangebot der TH OWL?",
@@ -132,9 +140,10 @@ fragen = {
                 "Nur Master",
                 "Nur Ausbildung",
                 "Bachelor & Master",
-                "Nur Zertifikate"
+                "Nur Schulungen"
             ],
-            "richtig": "Bachelor & Master"
+            "richtig": "Bachelor & Master",
+            "hinweis": "Das Angebot deckt sowohl grundlegende als auch weiterführende akademische Studiengänge ab."
         },
         {
             "frage": "An welcher Straße liegt der BildungsCampus Herford?",
@@ -144,7 +153,8 @@ fragen = {
                 "Bahnhofstraße",
                 "Campusallee"
             ],
-            "richtig": "Mary-Somerville-Boulevard"
+            "richtig": "Mary-Somerville-Boulevard",
+            "hinweis": "Viele Straßen im Campusgebiet sind nach bedeutenden Persönlichkeiten aus Wissenschaft und Geschichte benannt."
         }
     ],
 
@@ -157,17 +167,19 @@ fragen = {
                 "Messegelände",
                 "Bahnhof"
             ],
-            "richtig": "Britische Kaserne"
+            "richtig": "Britische Kaserne",
+            "hinweis": "Der BildungsCampus wurde auf einem ehemaligen militärischen Standort errichtet."
         },
         {
-            "frage": "Welche Aussage zur Studienorganisation in Herford ist am passendsten?",
+            "frage": "Wie finden die Vorlesungen bei DiMS statt?",
             "antworten": [
                 "Täglich vor Ort",
-                "Nur Labor",
-                "Digital mit Präsenz",
-                "Ohne Digital"
+                "Im Labor",
+                "Online und Präsenz",
+                "Nur Online"
             ],
-            "richtig": "Digital mit Präsenz"
+            "richtig": "Digital mit Präsenz",
+            "hinweis": "Man kann an den Volesungen ganz flexibel teilnhemen."
         },
         {
             "frage": "Welche Aussage beschreibt die Rolle von Herford innerhalb der TH OWL am genauesten?",
@@ -177,7 +189,8 @@ fragen = {
                 "Lernort",
                 "kein Standort"
             ],
-            "richtig": "Lernort"
+            "richtig": "Lernort",
+            "hinweis": "Der Standort ist Teil der Hochschule, dient jedoch vor allem als ergänzender Studienort."
         },
         {
             "frage": "Welche Haltestelle liegt nahe am BildungsCampus?",
@@ -187,17 +200,19 @@ fragen = {
                 "Vlothoer Str./Kaserne",
                 "Bahnhof Süd"
             ],
-            "richtig": "Vlothoer Str./Kaserne"
+            "richtig": "Vlothoer Str./Kaserne",
+            "hinweis": "Der BildungsCampus war eine Militärgelände."
         },
         {
             "frage": "Welche Zuordnung von Campusname und Stadt ist korrekt?",
             "antworten": [
-                "Sustainable Campus Herford",
-                "Sustainable Campus Detmold",
-                "Sustainable Campus Höxter",
-                "Sustainable Campus Lemgo"
+                "Sustainable Campus Höxter"
+                "Campus Detmold"
+                "Lemgo Innovation Campus"
+                "Herford BildungsCampus"
             ],
-            "richtig": "Sustainable Campus Höxter"
+            "richtig": "Sustainable Campus Höxter",
+            "hinweis": "Ein Standort ist besonders nachhaltig ausgerichtet"
         }
     ]
 }
@@ -241,9 +256,18 @@ def lade_highscores():
         return []
 
     try:
+
         with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as datei:
-            return json.load(datei)
-    except json.JSONDecodeError:
+
+            daten = json.load(datei)
+
+            if not isinstance(daten, list):
+                return []
+
+            return daten
+
+    except Exception:
+
         return []
 
 
@@ -442,17 +466,27 @@ frage_label.pack(pady=20)
 antwort_frame = tk.Frame(root, bg="#001f3f")
 antwort_frame.pack()
 
+antwort_frame.grid_columnconfigure(0, weight=1, minsize=350)# Linke Antwortspalte erhält eine Mindestbreite von 350 Pixeln.
+antwort_frame.grid_columnconfigure(1, weight=1, minsize=350)# Rechte Antwortspalte erhält dieselbe Mindestbreite.
+
 for i in range(4):
     button = tk.Button(
         antwort_frame,
         text="",
         width=38,
         height=2,
+        wraplength=320,
         font=("Arial", 14, "bold"),
         bg="#004C99",
-        fg="white"
+        fg="black"
     )
-    button.grid(row=i // 2, column=i % 2, padx=15, pady=15)
+    button.grid(
+        row=i // 2,
+        column=i % 2,
+        padx=15,
+        pady=15,
+        sticky="nsew"
+    )
     antwort_buttons.append(button)
 
 joker_frame = tk.Frame(root, bg="#001f3f")
@@ -616,9 +650,9 @@ def zeige_frage():
         antwort_buttons[i].config(
             text=antworten[i],
             bg="#004C99",
-            fg="white",
+            fg="black",
             activebackground="#0066CC",
-            activeforeground="white",
+            activeforeground="black",
             state="normal",
             command=lambda antwort=antworten[i]: pruefe_antwort(antwort)
         )
@@ -678,7 +712,7 @@ def pruefe_antwort(auswahl):
 
         for button in antwort_buttons:
             if button["text"] == auswahl:
-                button.config(bg="green", fg="white")
+                button.config(bg="#00cc44", fg="black", font=("Arial", 16, "bold"))
 
         zeige_effekt(True)
 
@@ -689,15 +723,18 @@ def pruefe_antwort(auswahl):
             )
         )
 
-        root.after(1600, naechste_frage)
+        root.after(
+            1600,
+            naechste_frage
+        )
 
     else:
         for button in antwort_buttons:
             if button["text"] == auswahl:
-                button.config(bg="red", fg="white")
+                button.config(bg="#cc0000", fg="white", font=("Arial", 16, "bold"))
 
             if button["text"] == richtige_antwort:
-                button.config(bg="green", fg="white")
+                button.config(bg="#00cc44", fg="black", font=("Arial", 16, "bold"))
 
         zeige_effekt(False)
 
@@ -758,7 +795,6 @@ def spiel_komplett_beenden():
 
     messagebox.showinfo("Spiel beendet", text)
     zeige_highscores()
-    root.destroy()
 
 
 # =========================
@@ -798,23 +834,17 @@ def anrufjoker():
     global joker_anruf_verfuegbar
 
     if not joker_anruf_verfuegbar:
-        messagebox.showwarning("Joker", "Anrufjoker wurde schon benutzt!")
+        messagebox.showwarning(
+            "Joker",
+            "Anrufjoker wurde schon benutzt!"
+        )
         return
 
     frage = spiel_fragen[frage_index]
-    richtige_antwort = frage["richtig"]
-
-    # Der Anrufjoker gibt nur einen Hinweis und verrät nicht direkt die Lösung.
-    hinweise = [
-        f"Die richtige Antwort beginnt mit: {richtige_antwort[0]}",
-        f"Die richtige Antwort besteht aus {len(richtige_antwort.split())} Wort/Wörtern.",
-        "Die richtige Antwort passt am besten zum Thema TH OWL / Herford.",
-        "Ich würde die fachlich passendste Antwort nehmen."
-    ]
 
     messagebox.showinfo(
         "Anrufjoker",
-        "📞 Dein Anrufjoker sagt:\n\n" + random.choice(hinweise)
+        "📞 Dein Anrufjoker sagt:\n\n" + frage["hinweis"]
     )
 
     joker_anruf_verfuegbar = False
