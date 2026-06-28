@@ -493,16 +493,23 @@ def start_abfragen():
                 continue
 
             # strip() entfernt Leerzeichen.
-            # capitalize() macht z. B. aus "fair" den Wert "Fair".
-            gewaehlter_modus = gewaehlter_modus.strip().capitalize()
+            # lower() macht Groß-/Kleinschreibung egal.
+            # Dadurch funktionieren z. B. "FAIR", "fair", "F", "f".
+            gewaehlter_modus = gewaehlter_modus.strip().lower()
 
-            if gewaehlter_modus in ["Fair", "Hard"]:
-                modus = gewaehlter_modus
+            # Fair-Modus akzeptiert ausgeschrieben oder als Abkürzung.
+            if gewaehlter_modus in ["fair", "f"]:
+                modus = "Fair"
+                break
+
+            # Hard-Modus akzeptiert ausgeschrieben oder als Abkürzung.
+            if gewaehlter_modus in ["hard", "h"]:
+                modus = "Hard"
                 break
 
             messagebox.showwarning(
                 "Ungültiger Modus",
-                "Bitte nur Fair oder Hard eingeben.",
+                "Bitte Fair, Hard, F oder H eingeben.",
                 parent=root
             )
 
