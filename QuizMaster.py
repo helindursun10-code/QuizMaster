@@ -11,8 +11,10 @@ import os
 
 HIGHSCORE_DATEI = "highscores.json"
 
+PROJEKTNAME = "QuizMaster"
+SLOGAN = "Wissen ist Millionen wert."
+
 # Maximale Länge für Spielernamen.
-# Dadurch bleiben Anzeige und Highscore-Liste übersichtlich.
 MAX_NAME_LAENGE = 15
 
 # Zeit pro Frage je nach Modus und Schwierigkeit
@@ -706,7 +708,7 @@ root.configure(bg="#001f3f")
 
 titel_label = tk.Label(
     root,
-    text="QUIZMASTER",
+    text="QuizMaster",
     font=("Arial", 30, "bold"),
     fg="gold",
     bg="#001f3f"
@@ -721,6 +723,15 @@ untertitel_label = tk.Label(
     bg="#001f3f"
 )
 untertitel_label.pack()
+
+slogan_label = tk.Label(
+    root,
+    text=SLOGAN,
+    font=("Arial", 14, "italic"),
+    fg="gold",
+    bg="#001f3f"
+)
+slogan_label.pack(pady=5)
 
 info_label = tk.Label(
     root,
@@ -851,6 +862,7 @@ def farbe_zuruecksetzen():
     root.configure(bg=normale_farbe)
     titel_label.config(bg=normale_farbe)
     untertitel_label.config(bg=normale_farbe)
+    slogan_label.config(bg=normale_farbe)
     info_label.config(bg=normale_farbe)
     punkte_label.config(bg=normale_farbe)
     timer_label.config(bg=normale_farbe)
@@ -875,6 +887,7 @@ def zeige_effekt(richtig):
     root.configure(bg=farbe)
     titel_label.config(bg=farbe)
     untertitel_label.config(bg=farbe)
+    slogan_label.config(bg=farbe)
     info_label.config(bg=farbe)
     punkte_label.config(bg=farbe)
     timer_label.config(bg=farbe)
@@ -1255,7 +1268,7 @@ def startmenue():
 
     titel = tk.Label(
         start_fenster,
-        text="QUIZMASTER",
+        text="QuizMaster",
         font=("Arial", 28, "bold"),
         fg="gold",
         bg="#001f3f"
