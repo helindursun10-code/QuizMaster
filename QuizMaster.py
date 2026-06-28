@@ -372,7 +372,7 @@ def start_abfragen():
     while True:
         anzahl_text = simpledialog.askstring(
             "Spieleranzahl",
-            "Wie viele Spieler? Bitte nur 1 oder 2 eingeben:",
+            "Wie viele Spieler? Bitte nur 1, 2, eins oder zwei eingeben:",
             parent=root
         )
 
@@ -381,17 +381,23 @@ def start_abfragen():
         if anzahl_text is None:
             programm_beenden()
 
-        # strip() entfernt Leerzeichen vor und nach der Eingabe.
-        anzahl_text = anzahl_text.strip()
+        # strip() entfernt Leerzeichen am Anfang und Ende.
+        # lower() macht die Eingabe klein, damit "EINS", "Eins" und "eins" gleich behandelt werden.
+        anzahl_text = anzahl_text.strip().lower()
 
-        # in prüft, ob die Eingabe in der erlaubten Liste enthalten ist.
-        if anzahl_text in ["1", "2"]:
-            anzahl = int(anzahl_text)
+        # Es werden Zahlen und ausgeschriebene Wörter akzeptiert.
+        # Dadurch funktionieren 1, 2, eins und zwei.
+        if anzahl_text in ["1", "eins"]:
+            anzahl = 1
+            break
+
+        if anzahl_text in ["2", "zwei"]:
+            anzahl = 2
             break
 
         messagebox.showwarning(
             "Ungültige Eingabe",
-            "Bitte nur 1 oder 2 eingeben.",
+            "Bitte nur 1, 2, eins oder zwei eingeben.",
             parent=root
         )
 
