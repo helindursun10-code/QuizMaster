@@ -50,6 +50,11 @@
     },
     {
         "name": "helin",
+        "punkte": 30,
+        "modus": "Fair"
+    },
+    {
+        "name": "helin",
         "punkte": 20,
         "modus": "Fair"
     },
@@ -112,5 +117,10 @@
         "name": "fwffvdsd",
         "punkte": 0,
         "modus": "Hard"
+    },
+    {
+        "name": "Helin",
+        "punkte": 0,
+        "modus": "Fair"
     }
 ]

@@ -367,52 +367,81 @@ def programm_beenden():
 def start_abfragen():
     global spieler_liste, modus
 
-    # Die Spieleranzahl wird als Text abgefragt.
-    # Dadurch können wir selbst prüfen, ob wirklich nur 1 oder 2 eingegeben wurde.
+    # Diese Funktion fragt alle Startdaten ab:
+    # 1. Spieleranzahl
+    # 2. Spielernamen
+    # 3. Spielmodus
+    #
+    # Die Variable "schritt" merkt sich, in welchem Teil der Abfrage wir sind.
+    # Dadurch kann Cancel zu einem vorherigen Schritt zurückgehen.
+
+    spieler_liste = []
+    anzahl = None
+    schritt = "spieleranzahl"
+
     while True:
-        anzahl_text = simpledialog.askstring(
-            "Spieleranzahl",
-            "Wie viele Spieler? Bitte nur 1, 2, eins oder zwei eingeben:",
-            parent=root
-        )
 
-        # Wenn der Nutzer auf "Abbrechen" klickt, gibt askstring None zurück.
-        # In diesem Fall wird das Spiel sauber beendet.
-        if anzahl_text is None:
-            programm_beenden()
-
-        # strip() entfernt Leerzeichen am Anfang und Ende.
-        # lower() macht die Eingabe klein, damit "EINS", "Eins" und "eins" gleich behandelt werden.
-        anzahl_text = anzahl_text.strip().lower()
-
-        # Es werden Zahlen und ausgeschriebene Wörter akzeptiert.
-        # Dadurch funktionieren 1, 2, eins und zwei.
-        if anzahl_text in ["1", "eins"]:
-            anzahl = 1
-            break
-
-        if anzahl_text in ["2", "zwei"]:
-            anzahl = 2
-            break
-
-        messagebox.showwarning(
-            "Ungültige Eingabe",
-            "Bitte nur 1, 2, eins oder zwei eingeben.",
-            parent=root
-        )
-
-    # Für jeden Spieler wird ein Name abgefragt.
-    for nummer in range(anzahl):
-        while True:
-            name = simpledialog.askstring(
-                "Spielername",
-                f"Name Spieler {nummer + 1} eingeben (max. {MAX_NAME_LAENGE} Zeichen):",
+        # =========================
+        # Schritt 1: Spieleranzahl
+        # =========================
+        if schritt == "spieleranzahl":
+            anzahl_text = simpledialog.askstring(
+                "Spieleranzahl",
+                "Wie viele Spieler? Bitte 1, 2, eins oder zwei eingeben:",
                 parent=root
             )
 
-            # Auch bei der Namenseingabe beendet Cancel das Programm.
-            if name is None:
+            # Bei der ersten Abfrage gibt es kein vorheriges Fenster.
+            # Deshalb beendet Cancel hier das Programm.
+            if anzahl_text is None:
                 programm_beenden()
+
+            # strip() entfernt Leerzeichen.
+            # lower() macht Groß-/Kleinschreibung egal.
+            anzahl_text = anzahl_text.strip().lower()
+
+            # in prüft, ob die Eingabe in der erlaubten Liste vorkommt.
+            if anzahl_text in ["1", "eins"]:
+                anzahl = 1
+                spieler_liste = []
+                schritt = "namen"
+                continue
+
+            if anzahl_text in ["2", "zwei"]:
+                anzahl = 2
+                spieler_liste = []
+                schritt = "namen"
+                continue
+
+            messagebox.showwarning(
+                "Ungültige Eingabe",
+                "Bitte nur 1, 2, eins oder zwei eingeben.",
+                parent=root
+            )
+
+        # =========================
+        # Schritt 2: Spielernamen
+        # =========================
+        elif schritt == "namen":
+            nummer = len(spieler_liste)
+
+            name = simpledialog.askstring(
+                "Spielername",
+                f"Name Spieler {nummer + 1} eingeben "
+                f"(max. {MAX_NAME_LAENGE} Zeichen):",
+                parent=root
+            )
+
+            # Cancel bei Spieler 1 geht zurück zur Spieleranzahl.
+            if name is None:
+                if len(spieler_liste) == 0:
+                    schritt = "spieleranzahl"
+                    continue
+
+                # Cancel bei Spieler 2 geht zurück zu Spieler 1.
+                # pop() entfernt den zuletzt gespeicherten Spieler.
+                spieler_liste.pop()
+                continue
 
             name = name.strip()
 
@@ -425,8 +454,8 @@ def start_abfragen():
                 )
                 continue
 
-            # len(name) zählt die Zeichen im Namen.
-            # > prüft, ob der Name länger als erlaubt ist.
+            # len(name) zählt die Zeichen.
+            # > prüft, ob der Name zu lang ist.
             if len(name) > MAX_NAME_LAENGE:
                 messagebox.showwarning(
                     "Name zu lang",
@@ -435,39 +464,47 @@ def start_abfragen():
                 )
                 continue
 
-            break
+            spieler_liste.append({
+                "name": name,
+                "punkte": 0
+            })
 
-        spieler_liste.append({
-            "name": name,
-            "punkte": 0
-        })
+            # Wenn alle Namen eingegeben sind, geht es zum Modus.
+            if len(spieler_liste) == anzahl:
+                schritt = "modus"
 
-    # Der Spielmodus wird abgefragt und geprüft.
-    while True:
-        gewaehlter_modus = simpledialog.askstring(
-            "Spielmodus",
-            "Wähle Modus: Fair oder Hard:",
-            parent=root
-        )
+        # =========================
+        # Schritt 3: Spielmodus
+        # =========================
+        elif schritt == "modus":
+            gewaehlter_modus = simpledialog.askstring(
+                "Spielmodus",
+                "Wähle Modus: Fair oder Hard:",
+                parent=root
+            )
 
-        # Cancel beendet auch hier das Programm.
-        if gewaehlter_modus is None:
-            programm_beenden()
+            # Cancel beim Modus geht zurück zur letzten Namenseingabe.
+            # Dafür entfernen wir den zuletzt gespeicherten Namen.
+            if gewaehlter_modus is None:
+                if len(spieler_liste) > 0:
+                    spieler_liste.pop()
 
-        # strip() entfernt Leerzeichen.
-        # capitalize() macht aus "fair" automatisch "Fair".
-        gewaehlter_modus = gewaehlter_modus.strip().capitalize()
+                schritt = "namen"
+                continue
 
-        # Nur Fair oder Hard sind erlaubt.
-        if gewaehlter_modus in ["Fair", "Hard"]:
-            modus = gewaehlter_modus
-            break
+            # strip() entfernt Leerzeichen.
+            # capitalize() macht z. B. aus "fair" den Wert "Fair".
+            gewaehlter_modus = gewaehlter_modus.strip().capitalize()
 
-        messagebox.showwarning(
-            "Ungültiger Modus",
-            "Bitte nur Fair oder Hard eingeben.",
-            parent=root
-        )
+            if gewaehlter_modus in ["Fair", "Hard"]:
+                modus = gewaehlter_modus
+                break
+
+            messagebox.showwarning(
+                "Ungültiger Modus",
+                "Bitte nur Fair oder Hard eingeben.",
+                parent=root
+            )
 
 
 # =========================
