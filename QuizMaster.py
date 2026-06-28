@@ -706,9 +706,12 @@ root.title("QuizMaster - TH OWL & Herford Edition")
 root.geometry("950x720")
 root.configure(bg="#001f3f")
 
+main_frame = tk.Frame(root, bg="#001f3f")
+main_frame.place(relx=0.5, rely=0.48, anchor="center")
+
 titel_label = tk.Label(
-    root,
-    text="QuizMaster",
+    main_frame,
+    text=PROJEKTNAME,
     font=("Arial", 30, "bold"),
     fg="gold",
     bg="#001f3f"
@@ -716,7 +719,7 @@ titel_label = tk.Label(
 titel_label.pack(pady=10)
 
 untertitel_label = tk.Label(
-    root,
+    main_frame,
     text="TH OWL & Herford Edition",
     font=("Arial", 16, "bold"),
     fg="white",
@@ -725,7 +728,7 @@ untertitel_label = tk.Label(
 untertitel_label.pack()
 
 slogan_label = tk.Label(
-    root,
+    main_frame,
     text=SLOGAN,
     font=("Arial", 14, "italic"),
     fg="gold",
@@ -734,7 +737,7 @@ slogan_label = tk.Label(
 slogan_label.pack(pady=5)
 
 info_label = tk.Label(
-    root,
+    main_frame,
     text="",
     font=("Arial", 15),
     fg="white",
@@ -743,7 +746,7 @@ info_label = tk.Label(
 info_label.pack(pady=10)
 
 punkte_label = tk.Label(
-    root,
+    main_frame,
     text="Punkte: 0",
     font=("Arial", 16),
     fg="white",
@@ -752,7 +755,7 @@ punkte_label = tk.Label(
 punkte_label.pack()
 
 timer_label = tk.Label(
-    root,
+    main_frame,
     text="Zeit: 0",
     font=("Arial", 18, "bold"),
     fg="red",
@@ -761,7 +764,7 @@ timer_label = tk.Label(
 timer_label.pack(pady=10)
 
 frage_label = tk.Label(
-    root,
+    main_frame,
     text="",
     wraplength=800,
     font=("Arial", 20),
@@ -770,7 +773,7 @@ frage_label = tk.Label(
 )
 frage_label.pack(pady=20)
 
-antwort_frame = tk.Frame(root, bg="#001f3f")
+antwort_frame = tk.Frame(main_frame, bg="#001f3f")
 antwort_frame.pack()
 
 for i in range(4):
@@ -790,7 +793,7 @@ for i in range(4):
     button.grid(row=i // 2, column=i % 2, padx=15, pady=15)
     antwort_buttons.append(button)
 
-joker_frame = tk.Frame(root, bg="#001f3f")
+joker_frame = tk.Frame(main_frame, bg="#001f3f")
 joker_frame.pack(pady=20)
 
 joker_5050_button = tk.Button(
@@ -826,7 +829,7 @@ joker_switch_button = tk.Button(
 joker_switch_button.grid(row=0, column=3, padx=10)
 
 highscore_button = tk.Button(
-    root,
+    main_frame,
     text="Rangliste anzeigen",
     font=("Arial", 14),
     command=zeige_highscores
@@ -834,7 +837,7 @@ highscore_button = tk.Button(
 highscore_button.pack(pady=5)
 
 regeln_button = tk.Button(
-    root,
+    main_frame,
     text="Regeln anzeigen",
     font=("Arial", 14),
     command=zeige_regeln
@@ -842,7 +845,7 @@ regeln_button = tk.Button(
 regeln_button.pack(pady=5)
 
 hilfe_label = tk.Label(
-    root,
+    main_frame,
     text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker | Z = Zeitjoker | W = Frage wechseln",
     font=("Arial", 12),
     fg="white",
@@ -860,6 +863,7 @@ def farbe_zuruecksetzen():
     normale_farbe = "#001f3f"
 
     root.configure(bg=normale_farbe)
+    main_frame.config(bg=normale_farbe)
     titel_label.config(bg=normale_farbe)
     untertitel_label.config(bg=normale_farbe)
     slogan_label.config(bg=normale_farbe)
@@ -885,6 +889,7 @@ def zeige_effekt(richtig):
     root.bell()
 
     root.configure(bg=farbe)
+    main_frame.config(bg=farbe)
     titel_label.config(bg=farbe)
     untertitel_label.config(bg=farbe)
     slogan_label.config(bg=farbe)
