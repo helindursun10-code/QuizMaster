@@ -11,6 +11,10 @@ import os
 
 HIGHSCORE_DATEI = "highscores.json"
 
+# Maximale Länge für Spielernamen.
+# Dadurch bleiben Anzeige und Highscore-Liste übersichtlich.
+MAX_NAME_LAENGE = 15
+
 # Zeit pro Frage je nach Modus und Schwierigkeit
 ZEITLIMIT = {
     "Fair": {
@@ -363,44 +367,101 @@ def programm_beenden():
 def start_abfragen():
     global spieler_liste, modus
 
-    anzahl = simpledialog.askinteger(
-        "Spieleranzahl",
-        "Wie viele Spieler? 1 oder 2:"
-    )
-
-    if anzahl not in [1, 2]:
-        anzahl = 1
-
-    for nummer in range(anzahl):
-        name = simpledialog.askstring(
-            "Spielername",
-            f"Name Spieler {nummer + 1}:"
+    # Die Spieleranzahl wird als Text abgefragt.
+    # Dadurch können wir selbst prüfen, ob wirklich nur 1 oder 2 eingegeben wurde.
+    while True:
+        anzahl_text = simpledialog.askstring(
+            "Spieleranzahl",
+            "Wie viele Spieler? Bitte nur 1 oder 2 eingeben:",
+            parent=root
         )
 
-        if not name:
-            name = f"Spieler {nummer + 1}"
+        # Wenn der Nutzer auf "Abbrechen" klickt, gibt askstring None zurück.
+        # In diesem Fall wird das Spiel sauber beendet.
+        if anzahl_text is None:
+            programm_beenden()
+
+        # strip() entfernt Leerzeichen vor und nach der Eingabe.
+        anzahl_text = anzahl_text.strip()
+
+        # in prüft, ob die Eingabe in der erlaubten Liste enthalten ist.
+        if anzahl_text in ["1", "2"]:
+            anzahl = int(anzahl_text)
+            break
+
+        messagebox.showwarning(
+            "Ungültige Eingabe",
+            "Bitte nur 1 oder 2 eingeben.",
+            parent=root
+        )
+
+    # Für jeden Spieler wird ein Name abgefragt.
+    for nummer in range(anzahl):
+        while True:
+            name = simpledialog.askstring(
+                "Spielername",
+                f"Name Spieler {nummer + 1} eingeben (max. {MAX_NAME_LAENGE} Zeichen):",
+                parent=root
+            )
+
+            # Auch bei der Namenseingabe beendet Cancel das Programm.
+            if name is None:
+                programm_beenden()
+
+            name = name.strip()
+
+            # not name bedeutet: Der Name ist leer.
+            if not name:
+                messagebox.showwarning(
+                    "Ungültiger Name",
+                    "Bitte einen Namen eingeben.",
+                    parent=root
+                )
+                continue
+
+            # len(name) zählt die Zeichen im Namen.
+            # > prüft, ob der Name länger als erlaubt ist.
+            if len(name) > MAX_NAME_LAENGE:
+                messagebox.showwarning(
+                    "Name zu lang",
+                    f"Der Name darf maximal {MAX_NAME_LAENGE} Zeichen haben.",
+                    parent=root
+                )
+                continue
+
+            break
 
         spieler_liste.append({
             "name": name,
             "punkte": 0
         })
 
-    gewaehlter_modus = simpledialog.askstring(
-        "Spielmodus",
-        "Wähle Modus: Fair oder Hard:"
-    )
+    # Der Spielmodus wird abgefragt und geprüft.
+    while True:
+        gewaehlter_modus = simpledialog.askstring(
+            "Spielmodus",
+            "Wähle Modus: Fair oder Hard:",
+            parent=root
+        )
 
-    # Die Eingabe wird bereinigt, damit auch "fair", "FAIR" oder Leerzeichen funktionieren.
-    # Wenn die Eingabe ungültig ist, wird automatisch der Fair-Mode genutzt.
-    if not gewaehlter_modus:
-        gewaehlter_modus = "Fair"
-    else:
+        # Cancel beendet auch hier das Programm.
+        if gewaehlter_modus is None:
+            programm_beenden()
+
+        # strip() entfernt Leerzeichen.
+        # capitalize() macht aus "fair" automatisch "Fair".
         gewaehlter_modus = gewaehlter_modus.strip().capitalize()
 
-    if gewaehlter_modus not in ["Fair", "Hard"]:
-        gewaehlter_modus = "Fair"
+        # Nur Fair oder Hard sind erlaubt.
+        if gewaehlter_modus in ["Fair", "Hard"]:
+            modus = gewaehlter_modus
+            break
 
-    modus = gewaehlter_modus
+        messagebox.showwarning(
+            "Ungültiger Modus",
+            "Bitte nur Fair oder Hard eingeben.",
+            parent=root
+        )
 
 
 # =========================
