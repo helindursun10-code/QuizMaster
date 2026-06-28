@@ -1152,6 +1152,9 @@ def joker_5050():
 def anrufjoker():
     global joker_anruf_verfuegbar
 
+    if antwort_gesperrt:
+        return
+
     if not joker_anruf_verfuegbar:
         messagebox.showwarning("Joker", "Anrufjoker wurde schon benutzt!")
         return
@@ -1179,6 +1182,9 @@ def anrufjoker():
 def zeitjoker():
     global timer, joker_zeit_verfuegbar
 
+    if antwort_gesperrt:
+        return
+
     if not joker_zeit_verfuegbar:
         messagebox.showwarning("Joker", "Zeitjoker wurde schon benutzt!")
         return
@@ -1193,6 +1199,9 @@ def zeitjoker():
 
 def frage_wechseln_joker():
     global joker_switch_verfuegbar, spiel_fragen
+
+    if antwort_gesperrt:
+        return
 
     if not joker_switch_verfuegbar:
         messagebox.showwarning("Joker", "Frage-wechseln-Joker wurde schon benutzt!")
