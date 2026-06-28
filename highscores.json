@@ -109,6 +109,11 @@
         "modus": "Fair"
     },
     {
+        "name": "h",
+        "punkte": 20,
+        "modus": "Fair"
+    },
+    {
         "name": "betül",
         "punkte": 10,
         "modus": "Fair"
@@ -122,6 +127,11 @@
         "name": "he",
         "punkte": 10,
         "modus": "Hard"
+    },
+    {
+        "name": "h",
+        "punkte": 10,
+        "modus": "Fair"
     },
     {
         "name": "h",

@@ -541,6 +541,26 @@ def start_abfragen():
                 )
                 continue
 
+            # Für den Vergleich entfernen wir Leerzeichen und ignorieren Groß-/Kleinschreibung.
+            # Dadurch gelten "Helin Dursun", "helin dursun" und "HelinDursun" als gleicher Name.
+            vergleichs_name = name.replace(" ", "").lower()
+
+            name_schon_vergeben = False
+
+            for spieler in spieler_liste:
+                gespeicherter_name = spieler["name"].replace(" ", "").lower()
+
+                if gespeicherter_name == vergleichs_name:
+                    name_schon_vergeben = True
+
+            if name_schon_vergeben:
+                messagebox.showwarning(
+                    "Name schon vergeben",
+                    "Dieser Name wurde bereits eingegeben. Bitte einen anderen Namen wählen.",
+                    parent=root
+                )
+                continue
+
             spieler_liste.append({
                 "name": name,
                 "punkte": 0
