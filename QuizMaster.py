@@ -240,14 +240,22 @@ antwort_buttons = []
 # =========================
 
 def lade_highscores():
-    # Wenn die Datei noch nicht existiert, gibt es noch keine Highscores.
+    # Diese Funktion lädt die gespeicherten Highscores aus der JSON-Datei.
+    # Wenn die Datei fehlt, kaputt ist oder falsche Daten enthält,
+    # wird eine leere Liste zurückgegeben.
     if not os.path.exists(HIGHSCORE_DATEI):
         return []
 
     try:
         with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as datei:
-            return json.load(datei)
-    except json.JSONDecodeError:
+            daten = json.load(datei)
+
+            if isinstance(daten, list):
+                return daten
+
+            return []
+
+    except (json.JSONDecodeError, OSError):
         return []
 
 
@@ -272,23 +280,82 @@ def speichere_highscore(name, punkte_anzahl, spielmodus):
 
     speichere_highscores(daten)
 
-
 def zeige_highscores():
+    global timer_id
+
+    # Wenn die Rangliste während einer Frage geöffnet wird,
+    # pausieren wir den Timer.
+    timer_war_aktiv = False
+
+    if timer_id is not None:
+        root.after_cancel(timer_id)
+        timer_id = None
+        timer_war_aktiv = True
+
     daten = lade_highscores()
 
+    # Eigenes Fenster für die Rangliste.
+    # Das ist stabiler als messagebox.showinfo(), besonders auf macOS.
+    rangliste_fenster = tk.Toplevel(root)
+    rangliste_fenster.title("Rangliste")
+    rangliste_fenster.geometry("420x360")
+    rangliste_fenster.configure(bg="#001f3f")
+
+    # Fenster nach vorne holen.
+    rangliste_fenster.lift()
+    rangliste_fenster.attributes("-topmost", True)
+    rangliste_fenster.after(
+        200,
+        lambda: rangliste_fenster.attributes("-topmost", False)
+    )
+
+    titel = tk.Label(
+        rangliste_fenster,
+        text="RANGLISTE",
+        font=("Arial", 22, "bold"),
+        fg="gold",
+        bg="#001f3f"
+    )
+    titel.pack(pady=15)
+
     if not daten:
-        messagebox.showinfo(
-            "Rangliste",
-            "Noch keine Highscores vorhanden.\nSpiele zuerst eine Runde."
-        )
-        return
+        text = "Noch keine Highscores vorhanden.\nSpiele zuerst eine Runde."
+    else:
+        text = ""
 
-    text = "RANGLISTE\n\n"
+        for platz, eintrag in enumerate(daten[:10], start=1):
+            text += (
+                f"{platz}. {eintrag['name']} - "
+                f"{eintrag['punkte']} Punkte ({eintrag['modus']})\n"
+            )
 
-    for platz, eintrag in enumerate(daten[:10], start=1):
-        text += f"{platz}. {eintrag['name']} - {eintrag['punkte']} Punkte ({eintrag['modus']})\n"
+    rangliste_label = tk.Label(
+        rangliste_fenster,
+        text=text,
+        font=("Arial", 14),
+        fg="white",
+        bg="#001f3f",
+        justify="left"
+    )
+    rangliste_label.pack(pady=10)
 
-    messagebox.showinfo("Rangliste", text)
+    schliessen_button = tk.Button(
+        rangliste_fenster,
+        text="Schließen",
+        font=("Arial", 13),
+        command=rangliste_fenster.destroy
+    )
+    schliessen_button.pack(pady=15)
+
+    # wait_window wartet, bis das Ranglistenfenster geschlossen wird.
+    # Dadurch wird es nach Spielende nicht sofort durch root.destroy() geschlossen.
+    root.wait_window(rangliste_fenster)
+
+    # Timer nur fortsetzen, wenn er vorher wirklich aktiv war
+    # und noch keine Antwort gegeben wurde.
+    if timer_war_aktiv and not antwort_gesperrt:
+        starte_timer()
+
 
 def zeige_regeln():
     # Diese Funktion zeigt die Spielregeln in einem Infofenster an.
