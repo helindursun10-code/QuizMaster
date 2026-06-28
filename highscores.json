@@ -99,6 +99,11 @@
         "modus": "Fair"
     },
     {
+        "name": "he",
+        "punkte": 10,
+        "modus": "Hard"
+    },
+    {
         "name": "Helin",
         "punkte": 0,
         "modus": "Hard"
@@ -120,6 +125,11 @@
     },
     {
         "name": "Helin",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "he",
         "punkte": 0,
         "modus": "Fair"
     }

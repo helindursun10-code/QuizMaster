@@ -589,7 +589,11 @@ for i in range(4):
         height=2,
         font=("Arial", 14, "bold"),
         bg="#004C99",
-        fg="white"
+        fg="white",
+        activebackground="#0066CC",
+        activeforeground="white",
+        relief="raised",
+        bd=4
     )
     button.grid(row=i // 2, column=i % 2, padx=15, pady=15)
     antwort_buttons.append(button)
@@ -766,6 +770,8 @@ def zeige_frage():
             fg="white",
             activebackground="#0066CC",
             activeforeground="white",
+            relief="raised",
+            bd=4,
             state="normal",
             command=lambda antwort=antworten[i]: pruefe_antwort(antwort)
         )
