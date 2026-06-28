@@ -286,6 +286,28 @@ def zeige_highscores():
 
     messagebox.showinfo("Rangliste", text)
 
+def zeige_regeln():
+    # Diese Funktion zeigt die Spielregeln in einem Infofenster an.
+    # Der Spieler kann dadurch jederzeit nachlesen, wie das Spiel funktioniert.
+    regeln = (
+        "SPIELREGELN\n\n"
+        "• Es gibt 9 Fragen pro Runde.\n"
+        "• Die ersten 3 Fragen sind einfach.\n"
+        "• Die nächsten 3 Fragen sind mittel.\n"
+        "• Die letzten 3 Fragen sind schwer.\n"
+        "• Jede Frage hat 4 Antwortmöglichkeiten.\n"
+        "• Richtige Antworten geben Punkte.\n"
+        "• Eine falsche Antwort beendet die Runde.\n"
+        "• Wenn die Zeit abläuft, endet die Runde.\n"
+        "• Jeder Joker darf nur einmal benutzt werden.\n\n"
+        "JOKER:\n"
+        "• 50:50 entfernt zwei falsche Antworten.\n"
+        "• Anrufjoker gibt einen Hinweis.\n"
+        "• Zeitjoker gibt 10 Sekunden extra.\n"
+        "• Frage wechseln ersetzt die aktuelle Frage."
+    )
+
+    messagebox.showinfo("Spielregeln", regeln)
 
 # =========================
 # Hilfsfunktionen
@@ -503,6 +525,14 @@ highscore_button = tk.Button(
     command=zeige_highscores
 )
 highscore_button.pack(pady=5)
+
+regeln_button = tk.Button(
+    root,
+    text="Regeln anzeigen",
+    font=("Arial", 14),
+    command=zeige_regeln
+)
+regeln_button.pack(pady=5)
 
 hilfe_label = tk.Label(
     root,
