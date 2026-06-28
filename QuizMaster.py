@@ -332,6 +332,12 @@ def reset_joker():
 # Startabfragen
 # =========================
 
+def programm_beenden():
+    # Diese Funktion beendet das Programm sauber.
+    # Sie wird genutzt, wenn der Spieler bei einer Startabfrage auf "Abbrechen" klickt.
+    root.destroy()
+    raise SystemExit
+
 def start_abfragen():
     global spieler_liste, modus
 
