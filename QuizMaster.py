@@ -276,7 +276,12 @@ def speichere_highscore(name, punkte_anzahl, spielmodus):
     })
 
     # Höchste Punktzahl steht oben.
-    daten = sorted(daten, key=lambda eintrag: eintrag["punkte"], reverse=True)
+    # get("punkte", 0) verhindert Abstürze bei alten oder kaputten Einträgen.
+    daten = sorted(
+        daten,
+        key=lambda eintrag: eintrag.get("punkte", 0),
+        reverse=True
+    )
 
     speichere_highscores(daten)
 
@@ -295,10 +300,9 @@ def zeige_highscores():
     daten = lade_highscores()
 
     # Eigenes Fenster für die Rangliste.
-    # Das ist stabiler als messagebox.showinfo(), besonders auf macOS.
     rangliste_fenster = tk.Toplevel(root)
     rangliste_fenster.title("Rangliste")
-    rangliste_fenster.geometry("420x360")
+    rangliste_fenster.geometry("460x420")
     rangliste_fenster.configure(bg="#001f3f")
 
     # Fenster nach vorne holen.
@@ -324,9 +328,16 @@ def zeige_highscores():
         text = ""
 
         for platz, eintrag in enumerate(daten[:10], start=1):
+            # get() ist sicherer als eintrag["name"].
+            # Falls ein alter Highscore-Eintrag keinen Modus hat,
+            # stürzt das Programm nicht ab.
+            name = eintrag.get("name", "Unbekannt")
+            punkte_wert = eintrag.get("punkte", 0)
+            modus_wert = eintrag.get("modus", "Unbekannt")
+
             text += (
-                f"{platz}. {eintrag['name']} - "
-                f"{eintrag['punkte']} Punkte ({eintrag['modus']})\n"
+                f"{platz}. {name} - "
+                f"{punkte_wert} Punkte ({modus_wert})\n"
             )
 
     rangliste_label = tk.Label(
@@ -347,8 +358,7 @@ def zeige_highscores():
     )
     schliessen_button.pack(pady=15)
 
-    # wait_window wartet, bis das Ranglistenfenster geschlossen wird.
-    # Dadurch wird es nach Spielende nicht sofort durch root.destroy() geschlossen.
+    # Warten, bis das Ranglistenfenster geschlossen wurde.
     root.wait_window(rangliste_fenster)
 
     # Timer nur fortsetzen, wenn er vorher wirklich aktiv war
