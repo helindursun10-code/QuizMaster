@@ -1118,6 +1118,9 @@ def spiel_komplett_beenden():
 def joker_5050():
     global joker_5050_verfuegbar
 
+    if antwort_gesperrt:
+        return
+
     if not joker_5050_verfuegbar:
         messagebox.showwarning("Joker", "50:50 Joker wurde schon benutzt!")
         return
