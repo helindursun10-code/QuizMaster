@@ -29,6 +29,11 @@
         "punkte": 70
     },
     {
+        "name": "2",
+        "punkte": 70,
+        "modus": "Fair"
+    },
+    {
         "name": "helin",
         "punkte": 50,
         "modus": "Fair"
@@ -130,6 +135,16 @@
     },
     {
         "name": "he",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "he",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
         "punkte": 0,
         "modus": "Fair"
     }

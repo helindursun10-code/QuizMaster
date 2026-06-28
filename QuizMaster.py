@@ -582,7 +582,7 @@ antwort_frame = tk.Frame(root, bg="#001f3f")
 antwort_frame.pack()
 
 for i in range(4):
-    button = tk.Button(
+    button = tk.Label(
         antwort_frame,
         text="",
         width=38,
@@ -590,11 +590,11 @@ for i in range(4):
         font=("Arial", 14, "bold"),
         bg="#004C99",
         fg="white",
-        activebackground="#0066CC",
-        activeforeground="white",
         relief="raised",
-        bd=4
+        bd=4,
+        cursor="hand2"
     )
+
     button.grid(row=i // 2, column=i % 2, padx=15, pady=15)
     antwort_buttons.append(button)
 
@@ -768,12 +768,15 @@ def zeige_frage():
             text=antworten[i],
             bg="#004C99",
             fg="white",
-            activebackground="#0066CC",
-            activeforeground="white",
             relief="raised",
-            bd=4,
-            state="normal",
-            command=lambda antwort=antworten[i]: pruefe_antwort(antwort)
+            bd=4
+        )
+
+        # Bei Labels gibt es kein command=...
+        # Deshalb verbinden wir den Mausklick mit bind().
+        antwort_buttons[i].bind(
+            "<Button-1>",
+            lambda event, antwort=antworten[i]: pruefe_antwort(antwort)
         )
 
     timer = ZEITLIMIT[modus][schwierigkeitsgrad]
@@ -792,7 +795,8 @@ def starte_timer():
         timer_id = None
 
         for button in antwort_buttons:
-            button.config(command=lambda: None)
+            # Bei Labels entfernen wir die Klick-Funktion mit unbind().
+            button.unbind("<Button-1>")
 
         frage_label.config(text="⏰ ZEIT VORBEI!\n\nDas Spiel endet.")
         messagebox.showerror("Zeit vorbei", "Du warst zu langsam!")
@@ -820,10 +824,9 @@ def pruefe_antwort(auswahl):
     richtige_antwort = frage["richtig"]
     schwierigkeitsgrad = aktuelle_schwierigkeit()
 
-    # Nach einer Antwort werden nur die Klick-Funktionen entfernt.
-    # Die Farben bleiben sichtbar.
     for button in antwort_buttons:
-        button.config(command=lambda: None)
+        # Nach einer Antwort sollen die Antwortfelder nicht mehr klickbar sein.
+        button.unbind("<Button-1>")
 
     if auswahl == richtige_antwort:
         punkte += PUNKTE[schwierigkeitsgrad]
@@ -939,9 +942,11 @@ def joker_5050():
         button.config(
             text="---",
             bg="#333333",
-            fg="white",
-            command=lambda: None
+            fg="white"
         )
+
+        # Entfernte Antwort darf nicht mehr anklickbar sein.
+        button.unbind("<Button-1>")
 
     joker_5050_verfuegbar = False
     joker_5050_button.config(state="disabled")
