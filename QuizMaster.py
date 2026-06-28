@@ -372,23 +372,49 @@ def zeige_regeln():
     # Der Spieler kann dadurch jederzeit nachlesen, wie das Spiel funktioniert.
     regeln = (
         "SPIELREGELN\n\n"
-        "• Es gibt 9 Fragen pro Runde.\n"
+        "ABLAUF:\n"
+        "• Es können 1 oder 2 Spieler spielen.\n"
+        "• Jeder Spieler spielt eine eigene Runde.\n"
+        "• Pro Runde gibt es 9 Fragen.\n"
         "• Die ersten 3 Fragen sind einfach.\n"
         "• Die nächsten 3 Fragen sind mittel.\n"
         "• Die letzten 3 Fragen sind schwer.\n"
-        "• Jede Frage hat 4 Antwortmöglichkeiten.\n"
-        "• Richtige Antworten geben Punkte.\n"
+        "• Jede Frage hat 4 Antwortmöglichkeiten.\n\n"
+
+        "PUNKTE:\n"
+        "• Einfache Fragen geben 10 Punkte.\n"
+        "• Mittlere Fragen geben 20 Punkte.\n"
+        "• Schwere Fragen geben 30 Punkte.\n"
         "• Eine falsche Antwort beendet die Runde.\n"
-        "• Wenn die Zeit abläuft, endet die Runde.\n"
-        "• Jeder Joker darf nur einmal benutzt werden.\n\n"
+        "• Wenn die Zeit abläuft, endet die Runde.\n\n"
+
+        "MODI:\n"
+        "• Fair: mehr Zeit pro Frage.\n"
+        "• Hard: weniger Zeit pro Frage.\n"
+        "• Beim Start kann Fair/F oder Hard/H eingegeben werden.\n\n"
+
         "JOKER:\n"
+        "• Jeder Joker darf nur einmal pro Runde benutzt werden.\n"
         "• 50:50 entfernt zwei falsche Antworten.\n"
         "• Anrufjoker gibt einen Hinweis.\n"
         "• Zeitjoker gibt 10 Sekunden extra.\n"
-        "• Frage wechseln ersetzt die aktuelle Frage."
+        "• Frage wechseln ersetzt die aktuelle Frage durch eine neue Frage "
+        "mit gleicher Schwierigkeit.\n\n"
+
+        "STEUERUNG:\n"
+        "• Antworten können angeklickt werden.\n"
+        "• Tasten 1-4 wählen eine Antwort.\n"
+        "• F nutzt den 50:50 Joker.\n"
+        "• A nutzt den Anrufjoker.\n"
+        "• Z nutzt den Zeitjoker.\n"
+        "• W nutzt den Frage-wechseln-Joker.\n\n"
+
+        "RANGLISTE:\n"
+        "• Nach jeder Runde wird der Punktestand gespeichert.\n"
+        "• Die Rangliste zeigt die 10 besten Ergebnisse.\n"
     )
 
-    messagebox.showinfo("Spielregeln", regeln)
+    messagebox.showinfo("Spielregeln", regeln, parent=root)
 
 # =========================
 # Hilfsfunktionen
