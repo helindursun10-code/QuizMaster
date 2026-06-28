@@ -1284,12 +1284,21 @@ def startmenue():
 
     titel = tk.Label(
         start_fenster,
-        text="QuizMaster",
+        text=PROJEKTNAME,
         font=("Arial", 28, "bold"),
         fg="gold",
         bg="#001f3f"
     )
-    titel.pack(pady=25)
+    titel.pack(pady=15)
+
+    slogan = tk.Label(
+        start_fenster,
+        text=SLOGAN,
+        font=("Arial", 14, "italic"),
+        fg="gold",
+        bg="#001f3f"
+    )
+    slogan.pack(pady=5)
 
     text = tk.Label(
         start_fenster,
