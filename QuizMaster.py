@@ -1091,6 +1091,53 @@ def spieler_runde_beenden():
     aktueller_spieler_index += 1
     starte_spieler_runde()
 
+def spiel_neu_starten():
+    global spieler_liste, aktueller_spieler_index
+    global spieler_name, modus, spiel_fragen, frage_index, punkte, timer, timer_id
+    global joker_5050_verfuegbar, joker_anruf_verfuegbar
+    global joker_zeit_verfuegbar, joker_switch_verfuegbar
+    global antwort_gesperrt
+
+    # Diese Funktion setzt alle wichtigen Spielwerte zurück.
+    # Danach kann eine neue Runde gestartet werden, ohne das Programm neu zu öffnen.
+    if timer_id is not None:
+        root.after_cancel(timer_id)
+        timer_id = None
+
+    spieler_liste = []
+    aktueller_spieler_index = 0
+
+    spieler_name = ""
+    modus = "Fair"
+
+    spiel_fragen = []
+    frage_index = 0
+    punkte = 0
+    timer = 0
+
+    joker_5050_verfuegbar = True
+    joker_anruf_verfuegbar = True
+    joker_zeit_verfuegbar = True
+    joker_switch_verfuegbar = True
+
+    antwort_gesperrt = False
+
+    # Anzeige wieder neutral setzen.
+    info_label.config(text="")
+    punkte_label.config(text="Punkte: 0")
+    timer_label.config(text="Zeit: 0")
+    frage_label.config(text="", font=("Arial", 20))
+
+    for button in antwort_buttons:
+        button.unbind("<Button-1>")
+        button.config(text="", bg="#004C99", fg="white")
+
+    # Optional wieder Startmenü anzeigen.
+    startmenue()
+
+    # Danach werden wieder Spieleranzahl, Namen und Modus abgefragt.
+    start_abfragen()
+    starte_spieler_runde()
 
 def spiel_komplett_beenden():
     sortierte_spieler = sorted(
@@ -1110,10 +1157,22 @@ def spiel_komplett_beenden():
         else:
             text += "\nUnentschieden"
 
-    messagebox.showinfo("Spiel beendet", text)
-    zeige_highscores()
-    root.destroy()
+    messagebox.showinfo("Spiel beendet", text, parent=root)
 
+    # Nach dem Endergebnis wird die Rangliste angezeigt.
+    zeige_highscores()
+
+    # Danach kann der Nutzer entscheiden, ob er nochmal spielen möchte.
+    nochmal_spielen = messagebox.askyesno(
+        "Nochmal spielen?",
+        "Möchtest du nochmal spielen?",
+        parent=root
+    )
+
+    if nochmal_spielen:
+        spiel_neu_starten()
+    else:
+        root.destroy()
 
 # =========================
 # Joker
