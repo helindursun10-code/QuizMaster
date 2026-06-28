@@ -368,8 +368,8 @@ def zeige_highscores():
 
 
 def zeige_regeln():
-    # Diese Funktion zeigt die Spielregeln in einem Infofenster an.
-    # Der Spieler kann dadurch jederzeit nachlesen, wie das Spiel funktioniert.
+    # Diese Funktion zeigt die Spielregeln in einem eigenen Fenster an.
+    # Wir nutzen kein messagebox-Fenster, weil das auf macOS automatisch schwarz/grau aussieht.
     regeln = (
         "SPIELREGELN\n\n"
         "ABLAUF:\n"
@@ -411,10 +411,68 @@ def zeige_regeln():
 
         "RANGLISTE:\n"
         "• Nach jeder Runde wird der Punktestand gespeichert.\n"
-        "• Die Rangliste zeigt die 10 besten Ergebnisse.\n"
+        "• Die Rangliste zeigt die 10 besten Ergebnisse."
     )
 
-    messagebox.showinfo("Spielregeln", regeln, parent=root)
+    regeln_fenster = tk.Toplevel(root)
+    regeln_fenster.title("Spielregeln")
+    regeln_fenster.geometry("650x720")
+    regeln_fenster.configure(bg="#001f3f")
+
+    # Fenster nach vorne holen.
+    regeln_fenster.lift()
+    regeln_fenster.attributes("-topmost", True)
+    regeln_fenster.after(
+        200,
+        lambda: regeln_fenster.attributes("-topmost", False)
+    )
+
+    titel = tk.Label(
+        regeln_fenster,
+        text="SPIELREGELN",
+        font=("Arial", 24, "bold"),
+        fg="gold",
+        bg="#001f3f"
+    )
+    titel.pack(pady=15)
+
+    regeln_text = tk.Text(
+        regeln_fenster,
+        width=65,
+        height=28,
+        font=("Arial", 14),
+        fg="white",
+        bg="#001f3f",
+        wrap="word",
+        relief="flat",
+        borderwidth=0
+    )
+    regeln_text.insert("1.0", regeln)
+    regeln_text.config(state="disabled")
+    regeln_text.pack(padx=25, pady=10)
+
+    schliessen_button = tk.Label(
+        regeln_fenster,
+        text="Schließen",
+        font=("Arial", 14, "bold"),
+        bg="#004C99",
+        fg="white",
+        width=18,
+        height=2,
+        relief="raised",
+        bd=4,
+        cursor="hand2"
+    )
+    schliessen_button.pack(pady=15)
+
+    schliessen_button.bind(
+        "<Button-1>",
+        lambda event: regeln_fenster.destroy()
+    )
+
+    # Das Fenster bleibt aktiv, bis es geschlossen wird.
+    regeln_fenster.grab_set()
+    root.wait_window(regeln_fenster)
 
 # =========================
 # Hilfsfunktionen
@@ -1180,12 +1238,92 @@ def taste(event):
     elif taste == "w":
         frage_wechseln_joker()
 
+def startmenue():
+    # Dieses Fenster erscheint vor den Startabfragen.
+    # Der Spieler kann hier die Regeln lesen oder direkt das Spiel starten.
+    start_fenster = tk.Toplevel(root)
+    start_fenster.title("Startmenü")
+    start_fenster.geometry("500x350")
+    start_fenster.configure(bg="#001f3f")
+
+    start_fenster.lift()
+    start_fenster.attributes("-topmost", True)
+    start_fenster.after(
+        200,
+        lambda: start_fenster.attributes("-topmost", False)
+    )
+
+    titel = tk.Label(
+        start_fenster,
+        text="QUIZMASTER",
+        font=("Arial", 28, "bold"),
+        fg="gold",
+        bg="#001f3f"
+    )
+    titel.pack(pady=25)
+
+    text = tk.Label(
+        start_fenster,
+        text="Willkommen!\nDu kannst zuerst die Regeln lesen oder direkt starten.",
+        font=("Arial", 15),
+        fg="white",
+        bg="#001f3f",
+        justify="center"
+    )
+    text.pack(pady=10)
+
+    regeln_button = tk.Label(
+        start_fenster,
+        text="Regeln anzeigen",
+        font=("Arial", 14, "bold"),
+        bg="#004C99",
+        fg="white",
+        width=22,
+        height=2,
+        relief="raised",
+        bd=4,
+        cursor="hand2"
+    )
+    regeln_button.pack(pady=10)
+
+    starten_button = tk.Label(
+        start_fenster,
+        text="Spiel starten",
+        font=("Arial", 14, "bold"),
+        bg="#0b5c0b",
+        fg="white",
+        width=22,
+        height=2,
+        relief="raised",
+        bd=4,
+        cursor="hand2"
+    )
+    starten_button.pack(pady=10)
+
+    regeln_button.bind(
+        "<Button-1>",
+        lambda event: zeige_regeln()
+    )
+
+    starten_button.bind(
+        "<Button-1>",
+        lambda event: start_fenster.destroy()
+    )
+
+    # Wenn das Startmenü über X geschlossen wird, wird das Programm beendet.
+    start_fenster.protocol("WM_DELETE_WINDOW", programm_beenden)
+
+    start_fenster.grab_set()
+    root.wait_window(start_fenster)
+
 
 # =========================
 # Programmstart
 # =========================
 
 root.bind_all("<Key>", taste)
+
+startmenue()
 
 start_abfragen()
 starte_spieler_runde()
