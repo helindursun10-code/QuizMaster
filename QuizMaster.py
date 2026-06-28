@@ -958,6 +958,10 @@ def zeige_frage():
     random.shuffle(antworten)
 
     for i in range(4):
+        # Alte Klick-Verbindungen werden zuerst entfernt.
+        # Dadurch bleibt pro Antwortfeld immer nur eine aktuelle Klickaktion aktiv.
+        antwort_buttons[i].unbind("<Button-1>")
+
         antwort_buttons[i].config(
             text=antworten[i],
             bg="#004C99",
