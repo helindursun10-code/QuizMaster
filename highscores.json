@@ -20,6 +20,16 @@
         "modus": "Fair"
     },
     {
+        "name": "2",
+        "punkte": 180,
+        "modus": "Hard"
+    },
+    {
+        "name": "h",
+        "punkte": 180,
+        "modus": "Hard"
+    },
+    {
         "name": "helin",
         "punkte": 150,
         "modus": "Fair"
@@ -240,6 +250,21 @@
     },
     {
         "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "1",
+        "punkte": 0,
+        "modus": "Hard"
+    },
+    {
+        "name": "e",
         "punkte": 0,
         "modus": "Fair"
     },

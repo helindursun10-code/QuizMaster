@@ -234,6 +234,10 @@ joker_switch_verfuegbar = True
 # Die Buttons bleiben aber farbig und lesbar.
 antwort_gesperrt = False
 
+# Tastatursteuerung ist nur während einer aktiven Frage erlaubt.
+# Dadurch lösen Tasten in Eingabefenstern keine Joker aus.
+tastatur_aktiv = False
+
 antwort_buttons = []
 
 
@@ -528,7 +532,10 @@ def programm_beenden():
     raise SystemExit
 
 def start_abfragen():
-    global spieler_liste, modus
+    global spieler_liste, modus, tastatur_aktiv
+
+    # Während der Startabfragen soll die Quiz-Tastatur deaktiviert sein.
+    tastatur_aktiv = False
 
     # Diese Funktion fragt alle Startdaten ab:
     # 1. Spieleranzahl
@@ -935,10 +942,11 @@ def starte_spieler_runde():
 
 
 def zeige_frage():
-    global timer, timer_id, antwort_gesperrt
+    global timer, timer_id, antwort_gesperrt, tastatur_aktiv
 
     # Bei jeder neuen Frage darf wieder geantwortet werden.
     antwort_gesperrt = False
+    tastatur_aktiv = True
 
     # Alte Timer werden gestoppt, damit nicht mehrere Timer gleichzeitig laufen.
     if timer_id is not None:
@@ -1082,7 +1090,10 @@ def naechste_frage():
 
 
 def spieler_runde_beenden():
-    global aktueller_spieler_index
+    global aktueller_spieler_index, tastatur_aktiv
+
+    # Nach einer Runde sollen keine Tastatur-Joker mehr ausgelöst werden.
+    tastatur_aktiv = False
 
     spieler_liste[aktueller_spieler_index]["punkte"] = punkte
 
@@ -1310,6 +1321,10 @@ def frage_wechseln_joker():
 # =========================
 
 def taste(event):
+    # Tastatursteuerung nur erlauben, wenn gerade eine Frage aktiv ist.
+    if not tastatur_aktiv:
+        return
+
     taste = event.char.lower()
 
     if taste in ["1", "2", "3", "4"]:
