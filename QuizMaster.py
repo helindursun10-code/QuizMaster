@@ -402,8 +402,9 @@ def zeige_regeln():
         timer_war_aktiv = True
 
     # Diese Funktion zeigt die Spielregeln in einem eigenen Fenster an.
-    regeln = (
+    regeln =     regeln = (
         "SPIELREGELN\n\n"
+
         "ABLAUF:\n"
         "• Es können 1 oder 2 Spieler spielen.\n"
         "• Jeder Spieler spielt eine eigene Runde.\n"
@@ -411,27 +412,38 @@ def zeige_regeln():
         "• Die ersten 3 Fragen sind einfach.\n"
         "• Die nächsten 3 Fragen sind mittel.\n"
         "• Die letzten 3 Fragen sind schwer.\n"
-        "• Jede Frage hat 4 Antwortmöglichkeiten.\n\n"
+        "• Jede Frage hat 4 Antwortmöglichkeiten.\n"
+        "• Die Antwortmöglichkeiten werden zufällig gemischt.\n\n"
+
+        "EINGABEN BEIM START:\n"
+        "• Spieleranzahl: 1, 2, 01, 02, eins oder zwei.\n"
+        "• Spielernamen dürfen nicht leer sein.\n"
+        f"• Spielernamen dürfen maximal {MAX_NAME_LAENGE} Zeichen lang sein.\n"
+        "• Doppelte Spielernamen sind nicht erlaubt.\n"
+        "• Beim Spielmodus sind Fair, F, Hard oder H möglich.\n\n"
 
         "PUNKTE:\n"
         "• Einfache Fragen geben 10 Punkte.\n"
         "• Mittlere Fragen geben 20 Punkte.\n"
         "• Schwere Fragen geben 30 Punkte.\n"
+        "• Pro Runde sind maximal 180 Punkte möglich.\n"
         "• Eine falsche Antwort beendet die Runde.\n"
         "• Wenn die Zeit abläuft, endet die Runde.\n\n"
 
         "MODI:\n"
         "• Fair: mehr Zeit pro Frage.\n"
         "• Hard: weniger Zeit pro Frage.\n"
-        "• Beim Start kann Fair/F oder Hard/H eingegeben werden.\n\n"
+        "• Im Hard-Modus ist der Timer kürzer.\n\n"
 
         "JOKER:\n"
         "• Jeder Joker darf nur einmal pro Runde benutzt werden.\n"
+        "• Joker können nur vor einer Antwort benutzt werden.\n"
         "• 50:50 entfernt zwei falsche Antworten.\n"
-        "• Anrufjoker gibt einen Hinweis.\n"
+        "• Anrufjoker zeigt einen Hinweis zur aktuellen Frage.\n"
         "• Zeitjoker gibt 10 Sekunden extra.\n"
-        "• Frage wechseln ersetzt die aktuelle Frage durch eine neue Frage "
-        "mit gleicher Schwierigkeit.\n\n"
+        "• Frage wechseln ersetzt die aktuelle Frage.\n"
+        "• Die neue Frage hat die gleiche Schwierigkeit.\n"
+        "• Beim Fragewechsel startet der Timer für die neue Frage neu.\n\n"
 
         "STEUERUNG:\n"
         "• Antworten können angeklickt werden.\n"
@@ -439,11 +451,20 @@ def zeige_regeln():
         "• F nutzt den 50:50 Joker.\n"
         "• A nutzt den Anrufjoker.\n"
         "• Z nutzt den Zeitjoker.\n"
-        "• W nutzt den Frage-wechseln-Joker.\n\n"
+        "• W nutzt den Frage-wechseln-Joker.\n"
+        "• Während Eingabefenstern ist die Quiz-Tastatur deaktiviert.\n\n"
 
         "RANGLISTE:\n"
         "• Nach jeder Runde wird der Punktestand gespeichert.\n"
-        "• Die Rangliste zeigt die 10 besten Ergebnisse."
+        "• Die Rangliste zeigt die 10 besten Ergebnisse.\n"
+        "• Gespeichert werden Name, Punkte und Spielmodus.\n"
+        "• Die Rangliste wird nach Punkten sortiert.\n\n"
+
+        "SPIELENDE:\n"
+        "• Nach allen Spielern wird ein Endergebnis angezeigt.\n"
+        "• Bei zwei Spielern wird der Gewinner angezeigt.\n"
+        "• Bei gleicher Punktzahl gibt es ein Unentschieden.\n"
+        "• Danach kann ein neues Spiel gestartet werden."
     )
 
     regeln_fenster = tk.Toplevel(root)
@@ -462,34 +483,53 @@ def zeige_regeln():
     titel = tk.Label(
         regeln_fenster,
         text="SPIELREGELN",
-        font=("Arial", 24, "bold"),
+        font=("Arial", 22, "bold"),
         fg="gold",
         bg="#001f3f"
     )
     titel.pack(pady=15)
 
+    # Frame für Regeltext und Scrollbar.
+    # Dadurch kann der längere Regeltext gescrollt werden.
+    text_frame = tk.Frame(regeln_fenster, bg="#001f3f")
+    text_frame.pack(padx=25, pady=10, fill="both", expand=True)
+
+    # Scrollbar für den Regeltext.
+    scrollbar = tk.Scrollbar(text_frame)
+    scrollbar.pack(side="right", fill="y")
+
+    # Textfeld für die Regeln.
+    # yscrollcommand verbindet das Textfeld mit der Scrollbar.
     regeln_text = tk.Text(
-        regeln_fenster,
-        width=65,
-        height=28,
-        font=("Arial", 14),
+        text_frame,
+        width=72,
+        height=22,
+        font=("Arial", 13),
         fg="white",
         bg="#001f3f",
         wrap="word",
         relief="flat",
-        borderwidth=0
+        borderwidth=0,
+        yscrollcommand=scrollbar.set
     )
+
     regeln_text.insert("1.0", regeln)
+
+    # Das Textfeld ist nur zum Lesen da.
+    # Deshalb wird es nach dem Einfügen deaktiviert.
     regeln_text.config(state="disabled")
-    regeln_text.pack(padx=25, pady=10)
+    regeln_text.pack(side="left", fill="both", expand=True)
+
+    # Scrollbar steuert das Textfeld.
+    scrollbar.config(command=regeln_text.yview)
 
     schliessen_button = tk.Label(
         regeln_fenster,
         text="Schließen",
-        font=("Arial", 14, "bold"),
+        font=("Arial", 13, "bold"),
         bg="#004C99",
         fg="white",
-        width=18,
+        width=16,
         height=2,
         relief="raised",
         bd=4,
