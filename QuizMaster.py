@@ -590,7 +590,7 @@ def start_abfragen():
         if schritt == "spieleranzahl":
             anzahl_text = simpledialog.askstring( # Fragt den Spieler, wie viele Personen mitspielen sollen (1 oder 2).
                 "Spieleranzahl", # Die Eingabe erfolgt über ein Eingabefenster (GUI).
-                "Wie viele Spieler? Bitte 1, 2, eins oder zwei eingeben:",
+                "Wie viele Spieler? Bitte 1 oder 2 eingeben:",
                 parent=root
             )
 
@@ -602,13 +602,15 @@ def start_abfragen():
             # lower() macht Groß-/Kleinschreibung egal.
             anzahl_text = anzahl_text.strip().lower()
 
-            if anzahl_text in ["1", "eins"]: # in prüft, ob die Eingabe in der erlaubten Liste vorkommt.
+            # 1, 01 und eins werden als ein Spieler akzeptiert.
+            if anzahl_text in ["1", "01", "eins"]:
                 anzahl = 1
                 spieler_liste = []
                 schritt = "namen"
                 continue
 
-            if anzahl_text in ["2", "zwei"]: # in prüft, ob die Eingabe in der erlaubten Liste vorkommt.
+            # 2, 02 und zwei werden als zwei Spieler akzeptiert.
+            if anzahl_text in ["2", "02", "zwei"]:
                 anzahl = 2
                 spieler_liste = []
                 schritt = "namen"
@@ -616,7 +618,7 @@ def start_abfragen():
 
             messagebox.showwarning(
                 "Ungültige Eingabe",
-                "Bitte nur 1, 2, eins oder zwei eingeben.",
+                "Bitte nur 1 oder 2 eingeben.",
                 parent=root
             )
 
