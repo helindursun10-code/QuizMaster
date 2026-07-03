@@ -729,7 +729,7 @@ def start_abfragen():
 
             messagebox.showwarning(
                 "Ungültiger Modus",
-                "Bitte Fair, Hard, F oder H eingeben.",
+                "Bitte Fair oder Hard eingeben.",
                 parent=root
             )
 

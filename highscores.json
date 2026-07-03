@@ -269,6 +269,11 @@
         "modus": "Fair"
     },
     {
+        "name": "d",
+        "punkte": 10,
+        "modus": "Fair"
+    },
+    {
         "name": "Helin",
         "punkte": 0,
         "modus": "Hard"
