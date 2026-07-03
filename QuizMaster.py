@@ -387,8 +387,21 @@ def zeige_highscores():
 
 
 def zeige_regeln():
+    global timer_id
+
+    # Wenn die Regeln während einer aktiven Frage geöffnet werden,
+    # soll der Timer nicht weiterlaufen.
+    # Der Spieler kann während des Regeln-Fensters nicht antworten.
+    timer_war_aktiv = False
+
+    # Wenn gerade ein Timer läuft, wird er gestoppt.
+    # Die ID des Timers wird mit after_cancel() abgebrochen.
+    if timer_id is not None:
+        root.after_cancel(timer_id)
+        timer_id = None
+        timer_war_aktiv = True
+
     # Diese Funktion zeigt die Spielregeln in einem eigenen Fenster an.
-    # Wir nutzen kein messagebox-Fenster, weil das auf macOS automatisch schwarz/grau aussieht.
     regeln = (
         "SPIELREGELN\n\n"
         "ABLAUF:\n"
@@ -490,8 +503,20 @@ def zeige_regeln():
     )
 
     # Das Fenster bleibt aktiv, bis es geschlossen wird.
+    # Das Regeln-Fenster wird in den Vordergrund gesetzt.
+    # Durch grab_set() kann der Nutzer erst weiter im Spiel klicken,
+    # wenn das Regeln-Fenster geschlossen wurde.
     regeln_fenster.grab_set()
+
+    # wait_window() wartet, bis das Regeln-Fenster geschlossen wird.
+    # Erst danach läuft der Code darunter weiter.
     root.wait_window(regeln_fenster)
+
+    # Wenn vor dem Öffnen der Regeln ein Timer aktiv war
+    # und noch keine Antwort gegeben wurde,
+    # wird der Timer nach dem Schließen der Regeln wieder gestartet.
+    if timer_war_aktiv and not antwort_gesperrt:
+        starte_timer()
 
 # =========================
 # Hilfsfunktionen
@@ -1254,9 +1279,17 @@ def joker_5050():
     joker_5050_button.config(state="disabled")
 
 
-def anrufjoker(): # Prüft, ob der Joker bereits verwendet wurde
+def anrufjoker():
     global joker_anruf_verfuegbar
 
+    # Wenn schon eine Antwort gegeben wurde,
+    # darf kein Joker mehr benutzt werden.
+    # Dadurch kann der Spieler nachträglich keinen Vorteil bekommen.
+    if antwort_gesperrt:
+        return
+
+    # Prüft, ob der Anrufjoker in dieser Runde bereits benutzt wurde.
+    # Jeder Joker darf pro Runde nur einmal verwendet werden.
     if not joker_anruf_verfuegbar:
         messagebox.showwarning(
             "Joker",
@@ -1264,22 +1297,21 @@ def anrufjoker(): # Prüft, ob der Joker bereits verwendet wurde
         )
         return
 
-    frage = spiel_fragen[frage_index] # Holt die aktuelle Frage
+    # Holt die aktuelle Frage aus der Liste der Spiel-Fragen.
+    frage = spiel_fragen[frage_index]
 
-    messagebox.showinfo( # Zeigt den gespeicherten Hinweis zur aktuellen Frage an
+    # Zu jeder Frage gibt es im Dictionary einen eigenen Hinweis.
+    # Dieser Hinweis wird hier angezeigt.
+    messagebox.showinfo(
         "Anrufjoker",
         "📞 Dein Anrufjoker sagt:\n\n" + frage["hinweis"]
     )
 
-    joker_anruf_verfuegbar = False # Joker als benutzt markieren und Button deaktivieren
-    joker_anruf_button.config(state="disabled")
-
-    messagebox.showinfo(
-        "Anrufjoker",
-        "📞 Dein Anrufjoker sagt:\n\n" + random.choice(hinweise)
-    )
-
+    # Nach der Nutzung wird der Anrufjoker als nicht mehr verfügbar markiert.
     joker_anruf_verfuegbar = False
+
+    # Der Button wird deaktiviert, damit der Nutzer sieht,
+    # dass der Joker bereits verwendet wurde.
     joker_anruf_button.config(state="disabled")
 
 
