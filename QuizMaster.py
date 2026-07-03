@@ -1351,7 +1351,7 @@ def startmenue():
     # Der Spieler kann hier die Regeln lesen oder direkt das Spiel starten.
     start_fenster = tk.Toplevel(root)
     start_fenster.title("Startmenü")
-    start_fenster.geometry("520x390")
+    start_fenster.geometry("560x420")
     start_fenster.configure(bg="#001f3f")
 
     start_fenster.lift()
@@ -1385,7 +1385,9 @@ def startmenue():
         font=("Arial", 15),
         fg="white",
         bg="#001f3f",
-        justify="center"
+        justify="center",
+        wraplength=430
+
     )
     text.pack(pady=10)
 
