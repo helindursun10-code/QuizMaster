@@ -69,7 +69,7 @@ fragen = {
                 "Sustainable Campus"
             ],
             "richtig": "BildungsCampus",
-            "hinweis": "Der Name beschriebt klar den Fokus auf Lehre und Studium in Herford."
+            "hinweis": "Der Name beschreibt klar den Fokus auf Lehre und Studium in Herford."
         },
         {
             "frage": "In welchem Bundesland liegt Herford?",
@@ -80,7 +80,7 @@ fragen = {
                 "Niedersachsen"
             ],
             "richtig": "NRW",
-            "hinweis": "Es ist das bevölkerungsriechste BUndesland Deutschlands."
+            "hinweis": "Es ist das bevölkerungsreichste Bundesland Deutschlands."
         },
         {
             "frage": "In welcher Stadt befindet sich der BildungsCampus der TH OWL?",
@@ -91,7 +91,7 @@ fragen = {
                 "Höxter"
             ],
             "richtig": "Herford",
-            "hinweis": " ich weiss das Lemgo, Detmold und Höxter Hauptstandorte sind."
+            "hinweis": "Ich weiß, dass Lemgo, Detmold und Höxter Hauptstandorte sind."
         },
         {
             "frage": "Wie nennt sich die Stadt Herford offiziell?",
@@ -127,7 +127,7 @@ fragen = {
                 "Detmold, Herford und Höxter"
             ],
             "richtig": "Lemgo, Detmold und Höxter",
-            "hinweis": "Die Hauptsandorte sind Campusstandorte, die nicht gesuchten Orte sind für Lern- oder Projektstandorte."
+            "hinweis": "Die Hauptstandorte sind Campusstandorte. Andere Orte sind eher Lern- oder Projektstandorte."
         },
         {
             "frage": "Welcher Campusname gehört zur TH OWL in Lemgo?",
@@ -138,7 +138,7 @@ fragen = {
                 "RailCampus"
             ],
             "richtig": "Innovation Campus",
-            "hinweis": "In Lemgo gibt es ein InnovationSPIN"
+            "hinweis": "In Lemgo gibt es den InnovationSPIN."
         },
         {
             "frage": "Welche Aussage passt zum Studienangebot der TH OWL?",
@@ -185,7 +185,7 @@ fragen = {
                 "Ohne Digital"
             ],
             "richtig": "Digital mit Präsenz",
-            "hinweis": "Man kann an den Volesungen ganz flexibel teilnhemen."
+            "hinweis": "Man kann an den Vorlesungen flexibel teilnehmen."
         },
         {
             "frage": "Welche Aussage beschreibt die Rolle von Herford innerhalb der TH OWL am genauesten?",
@@ -207,7 +207,7 @@ fragen = {
                 "Bahnhof Süd"
             ],
             "richtig": "Vlothoer Str./Kaserne",
-            "hinweis": "Der BildungsCampus war eine Militärgelände."
+            "hinweis": "Der BildungsCampus befindet sich auf einem ehemaligen Militärgelände."
         },
         {
             "frage": "Welche Zuordnung von Campusname und Stadt ist korrekt?",
@@ -218,7 +218,7 @@ fragen = {
                 "Sustainable Campus Lemgo"
             ],
             "richtig": "Sustainable Campus Höxter",
-            "hinweis": "Ein Standort ist besonders nachhaltig ausgerichtet"
+            "hinweis": "Ein Standort ist besonders nachhaltig ausgerichtet."
         }
     ]
 }
@@ -231,8 +231,8 @@ fragen = {
 spieler_liste = [] #Liste speichert alle spieler + Punkte
 aktueller_spieler_index = 0 #welcher spieler ist an der Reihe 1 oder 2
 
-spieler_name = "" #spieler wählt hard oder fair modus
-modus = "Fair"
+spieler_name = "" # Speichert den Namen des aktuellen Spielers.
+modus = "Fair" # Speichert den gewählten Spielmodus.
 
 spiel_fragen = [] #enthält die gestellte Frage
 frage_index = 0 #wie vielte Frage z.B. 1/9
@@ -1165,7 +1165,7 @@ def spiel_neu_starten():
     global spieler_name, modus, spiel_fragen, frage_index, punkte, timer, timer_id
     global joker_5050_verfuegbar, joker_anruf_verfuegbar
     global joker_zeit_verfuegbar, joker_switch_verfuegbar
-    global antwort_gesperrt
+    global antwort_gesperrt, tastatur_aktiv
 
     # Diese Funktion setzt alle wichtigen Spielwerte zurück.
     # Danach kann eine neue Runde gestartet werden, ohne das Programm neu zu öffnen.
@@ -1190,6 +1190,7 @@ def spiel_neu_starten():
     joker_switch_verfuegbar = True
 
     antwort_gesperrt = False
+    tastatur_aktiv = False
 
     # Anzeige wieder neutral setzen.
     info_label.config(text="")
