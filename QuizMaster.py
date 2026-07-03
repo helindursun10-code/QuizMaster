@@ -57,7 +57,8 @@ fragen = {
                 "Ost-West-Lehre",
                 "Oldenburg-Weser"
             ],
-            "richtig": "Technische Hochschule Ostwestfalen-Lippe"
+            "richtig": "Technische Hochschule Ostwestfalen-Lippe",
+            "hinweis": "Ich glaube OWL steht für Ostwestfalen-Lippe."
         },
         {
             "frage": "Wie heißt der TH-OWL-Lernort in Herford?",
@@ -67,7 +68,8 @@ fragen = {
                 "BildungsCampus",
                 "Sustainable Campus"
             ],
-            "richtig": "BildungsCampus"
+            "richtig": "BildungsCampus",
+            "hinweis": "Der Name beschriebt klar den Fokus auf Lehre und Studium in Herford."
         },
         {
             "frage": "In welchem Bundesland liegt Herford?",
@@ -77,7 +79,8 @@ fragen = {
                 "NRW",
                 "Niedersachsen"
             ],
-            "richtig": "NRW"
+            "richtig": "NRW",
+            "hinweis": "Es ist das bevölkerungsriechste BUndesland Deutschlands."
         },
         {
             "frage": "In welcher Stadt befindet sich der BildungsCampus der TH OWL?",
@@ -87,7 +90,8 @@ fragen = {
                 "Minden",
                 "Höxter"
             ],
-            "richtig": "Herford"
+            "richtig": "Herford",
+            "hinweis": " ich weiss das Lemgo, Detmold und Höxter Hauptstandorte sind."
         },
         {
             "frage": "Wie nennt sich die Stadt Herford offiziell?",
@@ -97,7 +101,8 @@ fragen = {
                 "Kurstadt Herford",
                 "Hansestadt Herford"
             ],
-            "richtig": "Hansestadt Herford"
+            "richtig": "Hansestadt Herford",
+            "hinweis": "Der Name geht auf einen mittelalterlichen Städtebund zurück, der für Handel und Wirtschaft wichtig war."
         }
     ],
 
@@ -110,7 +115,8 @@ fragen = {
                 "Digital Innovation Management",
                 "Business Information Systems"
             ],
-            "richtig": "Digital Management Solutions"
+            "richtig": "Digital Management Solutions",
+            "hinweis": "Die Abkürzung von dem Studiengang ist DiMS."
         },
         {
             "frage": "Welche drei Orte nennt die TH OWL als Hauptstandorte?",
@@ -120,7 +126,8 @@ fragen = {
                 "Lemgo, Herford und Minden",
                 "Detmold, Herford und Höxter"
             ],
-            "richtig": "Lemgo, Detmold und Höxter"
+            "richtig": "Lemgo, Detmold und Höxter",
+            "hinweis": "Die Hauptsandorte sind Campusstandorte, die nicht gesuchten Orte sind für Lern- oder Projektstandorte."
         },
         {
             "frage": "Welcher Campusname gehört zur TH OWL in Lemgo?",
@@ -130,7 +137,8 @@ fragen = {
                 "Innovation Campus",
                 "RailCampus"
             ],
-            "richtig": "Innovation Campus"
+            "richtig": "Innovation Campus",
+            "hinweis": "In Lemgo gibt es ein InnovationSPIN"
         },
         {
             "frage": "Welche Aussage passt zum Studienangebot der TH OWL?",
@@ -140,7 +148,8 @@ fragen = {
                 "Bachelor & Master",
                 "Nur Zertifikate"
             ],
-            "richtig": "Bachelor & Master"
+            "richtig": "Bachelor & Master",
+            "hinweis": "Das Angebot deckt sowohl grundlegende als auch weiterführende akademische Studiengänge ab."
         },
         {
             "frage": "An welcher Straße liegt der BildungsCampus Herford?",
@@ -150,7 +159,8 @@ fragen = {
                 "Bahnhofstraße",
                 "Campusallee"
             ],
-            "richtig": "Mary-Somerville-Boulevard"
+            "richtig": "Mary-Somerville-Boulevard",
+            "hinweis": "Viele Straßen im Campusgebiet sind nach bedeutenden Persönlichkeiten aus Wissenschaft und Geschichte benannt."
         }
     ],
 
@@ -163,7 +173,8 @@ fragen = {
                 "Messegelände",
                 "Bahnhof"
             ],
-            "richtig": "Britische Kaserne"
+            "richtig": "Britische Kaserne",
+            "hinweis": "Der BildungsCampus wurde auf einem ehemaligen militärischen Standort errichtet."
         },
         {
             "frage": "Welche Aussage zur Studienorganisation in Herford ist am passendsten?",
@@ -173,7 +184,8 @@ fragen = {
                 "Digital mit Präsenz",
                 "Ohne Digital"
             ],
-            "richtig": "Digital mit Präsenz"
+            "richtig": "Digital mit Präsenz",
+            "hinweis": "Man kann an den Volesungen ganz flexibel teilnhemen."
         },
         {
             "frage": "Welche Aussage beschreibt die Rolle von Herford innerhalb der TH OWL am genauesten?",
@@ -183,7 +195,8 @@ fragen = {
                 "Lernort",
                 "kein Standort"
             ],
-            "richtig": "Lernort"
+            "richtig": "Lernort",
+            "hinweis": "Der Standort ist Teil der Hochschule, dient jedoch vor allem als ergänzender Studienort."
         },
         {
             "frage": "Welche Haltestelle liegt nahe am BildungsCampus?",
@@ -193,7 +206,8 @@ fragen = {
                 "Vlothoer Str./Kaserne",
                 "Bahnhof Süd"
             ],
-            "richtig": "Vlothoer Str./Kaserne"
+            "richtig": "Vlothoer Str./Kaserne",
+            "hinweis": "Der BildungsCampus war eine Militärgelände."
         },
         {
             "frage": "Welche Zuordnung von Campusname und Stadt ist korrekt?",
@@ -203,7 +217,8 @@ fragen = {
                 "Sustainable Campus Höxter",
                 "Sustainable Campus Lemgo"
             ],
-            "richtig": "Sustainable Campus Höxter"
+            "richtig": "Sustainable Campus Höxter",
+            "hinweis": "Ein Standort ist besonders nachhaltig ausgerichtet"
         }
     ]
 }
@@ -1228,26 +1243,25 @@ def joker_5050():
     joker_5050_button.config(state="disabled")
 
 
-def anrufjoker():
+def anrufjoker(): # Prüft, ob der Joker bereits verwendet wurde
     global joker_anruf_verfuegbar
 
-    if antwort_gesperrt:
-        return
-
     if not joker_anruf_verfuegbar:
-        messagebox.showwarning("Joker", "Anrufjoker wurde schon benutzt!")
+        messagebox.showwarning(
+            "Joker",
+            "Anrufjoker wurde schon benutzt!"
+        )
         return
 
-    frage = spiel_fragen[frage_index]
-    richtige_antwort = frage["richtig"]
+    frage = spiel_fragen[frage_index] # Holt die aktuelle Frage
 
-    # Der Anrufjoker gibt nur einen Hinweis und verrät nicht direkt die Lösung.
-    hinweise = [
-        f"Die richtige Antwort beginnt mit: {richtige_antwort[0]}",
-        f"Die richtige Antwort besteht aus {len(richtige_antwort.split())} Wort/Wörtern.",
-        "Die richtige Antwort passt am besten zum Thema TH OWL / Herford.",
-        "Ich würde die fachlich passendste Antwort nehmen."
-    ]
+    messagebox.showinfo( # Zeigt den gespeicherten Hinweis zur aktuellen Frage an
+        "Anrufjoker",
+        "📞 Dein Anrufjoker sagt:\n\n" + frage["hinweis"]
+    )
+
+    joker_anruf_verfuegbar = False # Joker als benutzt markieren und Button deaktivieren
+    joker_anruf_button.config(state="disabled")
 
     messagebox.showinfo(
         "Anrufjoker",
