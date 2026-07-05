@@ -402,7 +402,7 @@ def zeige_regeln():
         timer_war_aktiv = True
 
     # Diese Funktion zeigt die Spielregeln in einem eigenen Fenster an.
-    regeln =     regeln = (
+    regeln =  (
         "SPIELREGELN\n\n"
 
         "ABLAUF:\n"
@@ -779,6 +779,11 @@ def start_abfragen():
 # =========================
 
 root = tk.Tk() # Erstellt das Hauptfenster der Anwendung
+
+# Das Hauptfenster wird beim Programmstart zunächst versteckt.
+# Dadurch sieht der Nutzer zuerst nur das Startmenü
+# und nicht schon die spätere Quizoberfläche im Hintergrund.
+root.withdraw()
 root.title("QuizMaster - TH OWL & Herford Edition") # Gibt den Fenstertitel am
 root.geometry("950x720") # Gibt die Fenstergröße (Breite x Höhe) an
 root.configure(bg="#001f3f") #Legt die Hintergrundfarbe des gesamten Fensters fest
@@ -1523,9 +1528,16 @@ def startmenue():
         lambda event: zeige_regeln()
     )
 
+    # Diese Funktion wird beim Klick auf "Spiel starten" ausgeführt.
+    # Zuerst wird das Startmenü geschlossen.
+    # Danach wird das vorher versteckte Hauptfenster wieder sichtbar.
+    def spiel_starten():
+        start_fenster.destroy()
+        root.deiconify()
+
     starten_button.bind(
         "<Button-1>",
-        lambda event: start_fenster.destroy()
+        lambda event: spiel_starten()
     )
 
     # Wenn das Startmenü über X geschlossen wird, wird das Programm beendet.
