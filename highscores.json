@@ -214,6 +214,11 @@
         "modus": "Fair"
     },
     {
+        "name": "h",
+        "punkte": 20,
+        "modus": "Hard"
+    },
+    {
         "name": "betül",
         "punkte": 10,
         "modus": "Fair"
@@ -402,6 +407,36 @@
         "name": "h",
         "punkte": 0,
         "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "helin",
+        "punkte": 0,
+        "modus": "Hard"
+    },
+    {
+        "name": "he",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "f",
+        "punkte": 0,
+        "modus": "Hard"
     },
     {
         "name": "h",

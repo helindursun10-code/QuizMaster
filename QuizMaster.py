@@ -1,7 +1,17 @@
+# Tkinter wird für die grafische Benutzeroberfläche verwendet.
 import tkinter as tk
+
+# messagebox zeigt Hinweis-, Fehler- und Bestätigungsfenster.
+# simpledialog wird für Texteingaben wie Name oder Spielmodus verwendet.
 from tkinter import messagebox, simpledialog
+
+# random wird für zufällige Fragen und gemischte Antworten verwendet.
 import random
+
+# json wird genutzt, um Highscores dauerhaft in einer JSON-Datei zu speichern.
 import json
+
+# os wird genutzt, um zu prüfen, ob die Highscore-Datei existiert.
 import os
 
 
@@ -9,15 +19,21 @@ import os
 # Einstellungen
 # =========================
 
+# Name der Datei, in der die Highscores dauerhaft gespeichert werden.
+# Da nur ein Dateiname angegeben wird, liegt die Datei im Arbeitsordner des Programms.
 HIGHSCORE_DATEI = "highscores.json"
 
+# Projektname und Slogan werden an mehreren Stellen der Oberfläche verwendet.
 PROJEKTNAME = "QuizMaster"
 SLOGAN = "Wissen ist Millionen wert."
 
-# Maximale Länge für Spielernamen.
+# Spielernamen dürfen höchstens 15 Zeichen lang sein.
 MAX_NAME_LAENGE = 15
 
-# Zeit pro Frage je nach Modus und Schwierigkeit
+# Die Zeitlimits werden in einem verschachtelten Dictionary gespeichert.
+# Erste Ebene: Spielmodus "Fair" oder "Hard".
+# Zweite Ebene: Schwierigkeitsgrad der Frage.
+# Der gespeicherte Zahlenwert entspricht den Sekunden pro Frage.
 ZEITLIMIT = {
     "Fair": {
         "einfach": 30,
@@ -31,7 +47,9 @@ ZEITLIMIT = {
     }
 }
 
-# Punkte pro Schwierigkeit
+# Punkte pro Schwierigkeitsgrad.
+# Über den Namen der Schwierigkeit kann später
+# direkt auf den passenden Punktwert zugegriffen werden.
 PUNKTE = {
     "einfach": 10,
     "mittel": 20,
@@ -42,10 +60,8 @@ PUNKTE = {
 # =========================
 # Fragen
 # =========================
-# Jede Frage hat:
-# - frage: Fragetext
-# - antworten: vier Antwortmöglichkeiten
-# - richtig: richtige Antwort
+# Fragen nach Schwierigkeit geordnet.
+# Jede Frage enthält Text, vier Antworten, richtige Lösung und Joker-Hinweis.
 
 fragen = {
     "einfach": [
@@ -228,31 +244,49 @@ fragen = {
 # Globale Spielvariablen
 # =========================
 
-spieler_liste = [] #Liste speichert alle spieler + Punkte
-aktueller_spieler_index = 0 #welcher spieler ist an der Reihe 1 oder 2
+# Enthält alle Spieler mit Name und erreichtem Punktestand.
+spieler_liste = []
 
-spieler_name = "" # Speichert den Namen des aktuellen Spielers.
-modus = "Fair" # Speichert den gewählten Spielmodus.
+# Index des aktuell spielenden Spielers in der spieler_liste.
+aktueller_spieler_index = 0
 
-spiel_fragen = [] #enthält die gestellte Frage
-frage_index = 0 #wie vielte Frage z.B. 1/9
+# Name des Spielers, der aktuell an der Reihe ist.
+spieler_name = ""
+
+# Aktuell gewählter Spielmodus.
+modus = "Fair"
+
+# Enthält die neun ausgewählten Fragen der aktuellen Spielerrunde.
+spiel_fragen = []
+
+# Index der aktuellen Frage. Index 0 entspricht Frage 1.
+frage_index = 0
+
+# Aktueller Punktestand des Spielers.
 punkte = 0
-timer = 0#speichert die ID des Laufenden Timers, kann später gestoppt oder neu egstrtet werden
+
+# Verbleibende Zeit der aktuellen Frage in Sekunden.
+timer = 0
+
+# ID des mit root.after() geplanten Timer-Aufrufs.
+# Dadurch kann der Timer später mit after_cancel() gestoppt werden.
 timer_id = None
 
+# True = Joker noch verfügbar, False = bereits benutzt
 joker_5050_verfuegbar = True
 joker_anruf_verfuegbar = True
 joker_zeit_verfuegbar = True
 joker_switch_verfuegbar = True
 
-# Verhindert, dass man nach einer Antwort nochmal klicken kann.
-# Die Buttons bleiben aber farbig und lesbar.
+# Verhindert mehrere Antworten oder Joker-Aktionen nach einer Antwort.
+# False = Eingabe möglich, True = weitere Eingaben gesperrt.
 antwort_gesperrt = False
 
 # Tastatursteuerung ist nur während einer aktiven Frage erlaubt.
 # Dadurch lösen Tasten in Eingabefenstern keine Joker aus.
 tastatur_aktiv = False
 
+# Enthält die vier Antwortfelder der Oberfläche
 antwort_buttons = []
 
 
@@ -262,40 +296,54 @@ antwort_buttons = []
 
 def lade_highscores():
     # Diese Funktion lädt die gespeicherten Highscores aus der JSON-Datei.
-    # Wenn die Datei fehlt, kaputt ist oder falsche Daten enthält,
+    # Wenn die Datei fehlt, ungültiges JSON enthält
+    # oder die geladene Hauptstruktur keine Liste ist,
     # wird eine leere Liste zurückgegeben.
     if not os.path.exists(HIGHSCORE_DATEI):
         return []
 
     try:
         with open(HIGHSCORE_DATEI, "r", encoding="utf-8") as datei:
-            daten = json.load(datei) #Wandelt den Inhalt der JSON-Datei in eine Python-Liste um
+            # Liest die JSON-Datei und wandelt den Inhalt
+            # in eine passende Python-Datenstruktur um.
+            daten = json.load(datei)
 
-            if isinstance(daten, list): # Sicherheitsprüfung: Es wird überprüft, ob die geladenen Daten tatsächlich eine Liste sind
+            # Prüft, ob die geladenen Highscores als Liste vorliegen.
+            if isinstance(daten, list):
                 return daten #Gibt die gelesenen Highscores zurück.
 
             return []
 
-    except (json.JSONDecodeError, OSError): #Bei Fehler leere Liste zurückgeben
+
+    # Ungültiges JSON oder Probleme beim Dateizugriff abfangen.
+    except (json.JSONDecodeError, OSError):
+
         return []
 
 
 def speichere_highscores(daten):
-    with open(HIGHSCORE_DATEI, "w", encoding="utf-8") as datei:  # Highscores werden dauerhaft in einer JSON-Datei gespeichert.
-        json.dump(daten, datei, indent=4, ensure_ascii=False) # Wandelt die Python-Liste in das JSON-Format um und speichert sie in der Datei.
+    # Öffnet die Highscore-Datei im Schreibmodus.
+    # Falls sie noch nicht existiert, wird sie automatisch erstellt.
+    with open(HIGHSCORE_DATEI, "w", encoding="utf-8") as datei:
+        # Speichert die Python-Daten im JSON-Format.
+        # indent=4 sorgt für lesbare Einrückung.
+        # ensure_ascii=False erhält Umlaute und Sonderzeichen.
+        json.dump(daten, datei, indent=4, ensure_ascii=False)
 
 
 def speichere_highscore(name, punkte_anzahl, spielmodus): # Neuer Punktestand wird zur Rangliste hinzugefügt.
     daten = lade_highscores()
 
-    daten.append({ # Neuen Eintrag mit Name, Punkten und Spielmodus hinzufügen.
+    # Fügt einen neuen Highscore als Dictionary zur Liste hinzu.
+    daten.append({
         "name": name,
         "punkte": punkte_anzahl,
         "modus": spielmodus
     })
 
     # Höchste Punktzahl steht oben.
-    # get("punkte", 0) verhindert Abstürze bei alten oder kaputten Einträgen.
+    # get("punkte", 0) verwendet 0 als Standardwert,
+    # falls bei einem Dictionary-Eintrag das Feld "punkte" fehlt.
     daten = sorted(
         daten,
         key=lambda eintrag: eintrag.get("punkte", 0),
@@ -307,6 +355,8 @@ def speichere_highscore(name, punkte_anzahl, spielmodus): # Neuer Punktestand wi
 def zeige_highscores():
     global timer_id
 
+    # global erlaubt das Verändern der außerhalb definierten timer_id
+
     # Wenn die Rangliste während einer Frage geöffnet wird,
     # pausieren wir den Timer.
     timer_war_aktiv = False
@@ -316,6 +366,7 @@ def zeige_highscores():
         timer_id = None
         timer_war_aktiv = True
 
+    # Gespeicherte Highscores aus der JSON-Datei laden.
     daten = lade_highscores()
 
     # Eigenes Fenster für die Rangliste.
@@ -346,10 +397,11 @@ def zeige_highscores():
     else:
         text = ""
 
+        # daten[:10] nimmt nur die zehn besten Einträge.
+        # enumerate(..., start=1) erzeugt Platznummern ab 1.
         for platz, eintrag in enumerate(daten[:10], start=1):
-            # get() ist sicherer als eintrag["name"].
-            # Falls ein alter Highscore-Eintrag keinen Modus hat,
-            # stürzt das Programm nicht ab.
+            # get() verwendet einen Standardwert, falls ein Feld fehlt.
+            # So wird z. B. bei fehlendem Modus "Unbekannt" angezeigt.
             name = eintrag.get("name", "Unbekannt")
             punkte_wert = eintrag.get("punkte", 0)
             modus_wert = eintrag.get("modus", "Unbekannt")
@@ -467,6 +519,7 @@ def zeige_regeln():
         "• Danach kann ein neues Spiel gestartet werden."
     )
 
+    # Erstellt ein zusätzliches Fenster für die Spielregeln.
     regeln_fenster = tk.Toplevel(root)
     regeln_fenster.title("Spielregeln")
     regeln_fenster.geometry("650x720")
@@ -563,8 +616,8 @@ def zeige_regeln():
 # =========================
 
 def waehle_spiel_fragen():
-    # Es werden 3 einfache, 3 mittlere und 3 schwere Fragen gewählt.
-    # Dadurch steigt die Schwierigkeit im Spiel.
+    # random.sample() wählt je drei unterschiedliche Fragen zufällig aus.
+    # Insgesamt entstehen 9 Fragen mit steigender Schwierigkeit.
     return (
         random.sample(fragen["einfach"], 3) +
         random.sample(fragen["mittel"], 3) +
@@ -585,15 +638,18 @@ def aktuelle_schwierigkeit():
 
 
 def reset_joker():
-    global joker_5050_verfuegbar, joker_anruf_verfuegbar # Setzt alle Joker wieder auf "verfügbar" zu beginn jedes Spiels
+    global joker_5050_verfuegbar, joker_anruf_verfuegbar
     global joker_zeit_verfuegbar, joker_switch_verfuegbar
 
-    joker_5050_verfuegbar = True # Alle Joker werden zurückgesetzt für die neue Runde (Logik)
+    # Alle Joker für eine neue Spielerrunde wieder freigeben.
+
+    joker_5050_verfuegbar = True
     joker_anruf_verfuegbar = True
     joker_zeit_verfuegbar = True
     joker_switch_verfuegbar = True
 
-    joker_5050_button.config(state="normal") #Die Buttons im UI werden wieder aktiviert,damit der Spieler sie erneut klicken kann.
+    # Joker-Buttons in der Oberfläche wieder aktivieren.
+    joker_5050_button.config(state="normal")
     joker_anruf_button.config(state="normal")
     joker_zeit_button.config(state="normal")
     joker_switch_button.config(state="normal")
@@ -622,6 +678,9 @@ def start_abfragen():
     anzahl = None
     schritt = "spieleranzahl"
 
+    # Wiederholt die Eingaben, bis gültige Werte vorliegen.
+    # continue startet den nächsten Schleifendurchlauf,
+    # break beendet die Schleife.
     while True:
 
         # =========================
@@ -666,6 +725,8 @@ def start_abfragen():
         # Schritt 2: Spielernamen
         # =========================
         elif schritt == "namen":
+            # Anzahl bereits gespeicherter Spieler bestimmt,
+            # welcher Spielername als Nächstes abgefragt wird.
             nummer = len(spieler_liste)
 
             name = simpledialog.askstring(
@@ -686,6 +747,7 @@ def start_abfragen():
                 spieler_liste.pop()
                 continue
 
+            # Entfernt Leerzeichen am Anfang und Ende des Namens.
             name = name.strip()
 
             if not name: # not name bedeutet: Der Name ist leer.
@@ -708,6 +770,7 @@ def start_abfragen():
             # Dadurch gelten "Helin Dursun", "helin dursun" und "HelinDursun" als gleicher Name.
             vergleichs_name = name.replace(" ", "").lower()
 
+            # Merkt sich, ob ein gleicher Name bereits existiert.
             name_schon_vergeben = False
 
             for spieler in spieler_liste:
@@ -784,11 +847,15 @@ root = tk.Tk() # Erstellt das Hauptfenster der Anwendung
 # Dadurch sieht der Nutzer zuerst nur das Startmenü
 # und nicht schon die spätere Quizoberfläche im Hintergrund.
 root.withdraw()
-root.title("QuizMaster - TH OWL & Herford Edition") # Gibt den Fenstertitel am
-root.geometry("950x720") # Gibt die Fenstergröße (Breite x Höhe) an
-root.configure(bg="#001f3f") #Legt die Hintergrundfarbe des gesamten Fensters fest
+# Legt Fenstertitel, Größe und Hintergrundfarbe fest.
+root.title("QuizMaster - TH OWL & Herford Edition")
+root.geometry("950x720")
+root.configure(bg="#001f3f")
 
+# Zentraler Container für die sichtbaren Spielelemente.
 main_frame = tk.Frame(root, bg="#001f3f")
+
+# Platziert den Container ungefähr mittig im Hauptfenster.
 main_frame.place(relx=0.5, rely=0.48, anchor="center")
 
 # =========================
@@ -812,7 +879,8 @@ untertitel_label = tk.Label( # Untertitel unter dem Haupttitel
 )
 untertitel_label.pack()
 
-slogan_label = tk.Label(  
+# Zeigt den Projektslogan unter dem Untertitel.
+slogan_label = tk.Label(
     main_frame,
     text=SLOGAN,
     font=("Arial", 14, "italic"),
@@ -821,7 +889,8 @@ slogan_label = tk.Label(
 )
 slogan_label.pack(pady=5)
 
-info_label = tk.Label(  # Infoanzeige (z. B. aktueller Spieler oder Hinweise)
+# Zeigt aktuellen Spieler, Modus und Schwierigkeitsgrad.
+info_label = tk.Label(
     main_frame,
     text="",
     font=("Arial", 15),
@@ -862,10 +931,12 @@ frage_label.pack(pady=20)
 # Antwortbereich
 # =========================
 
-antwort_frame = tk.Frame(main_frame, bg="#001f3f") # Box für die Antwortbuttons
+# Container für die vier klickbaren Antwortfelder.
+antwort_frame = tk.Frame(main_frame, bg="#001f3f")
 antwort_frame.pack()
 
-for i in range(4): # Erstellt 4 Antwortbuttons
+# Erstellt vier klickbare Antwortfelder als Labels.
+for i in range(4):
     button = tk.Label(
         antwort_frame,
         text="",
@@ -880,7 +951,8 @@ for i in range(4): # Erstellt 4 Antwortbuttons
     )
 
     button.grid(row=i // 2, column=i % 2, padx=15, pady=15) # Positionierung im Raster (2x2 Layout)
-    antwort_buttons.append(button) # Speichert alle Buttons in einer Liste für spätere Änderungen
+    # Speichert alle Antwortfelder für spätere Änderungen.
+    antwort_buttons.append(button)
 
 # =========================
 # Joker-Bereich
@@ -964,9 +1036,11 @@ hilfe_label.pack(pady=5)
 # =========================
 
 def farbe_zuruecksetzen():
-    normale_farbe = "#001f3f" # Nach dem Effekt wird die normale Hintergrundfarbe wiederhergestellt.
+    # Standard-Hintergrundfarbe der Anwendung.
+    normale_farbe = "#001f3f"
 
-    root.configure(bg=normale_farbe) # Alle UI-Elemente bekommen wieder die Standard-Hintergrundfarbe
+    # Setzt Hauptfenster und zentrale UI-Bereiche wieder auf Dunkelblau.
+    root.configure(bg=normale_farbe)
     main_frame.config(bg=normale_farbe)
     titel_label.config(bg=normale_farbe)
     untertitel_label.config(bg=normale_farbe)
@@ -993,7 +1067,8 @@ def zeige_effekt(richtig):
 
     root.bell() # Gibt einen kurzen Soundeffekt aus (System-Bell)
 
-    root.configure(bg=farbe)     # Ändert die Hintergrundfarbe aller UI-Elemente, um den Erfolg/Misserfolg visuell darzustellen
+    # Ändert die Hintergrundfarben der zentralen UI-Bereiche.
+    root.configure(bg=farbe)
     main_frame.config(bg=farbe)
     titel_label.config(bg=farbe)
     untertitel_label.config(bg=farbe)
@@ -1006,7 +1081,8 @@ def zeige_effekt(richtig):
     joker_frame.config(bg=farbe)
     hilfe_label.config(bg=farbe)
 
-    frage_label.config(text=text, font=("Arial", 28, "bold"))#Eine sehr auffällige, gut sichtbare Rückmeldung direkt nach Eingabe der Antwort
+    # Zeigt eine auffällige Rückmeldung direkt nach der Antwort.
+    frage_label.config(text=text, font=("Arial", 28, "bold"))
  
     root.after(500, farbe_zuruecksetzen) # Nach 500 Millisekunden wird die normale Farbe wiederhergestellt
 
@@ -1023,10 +1099,15 @@ def starte_spieler_runde(): # Startet die Spielrunde für den aktuellen Spieler
         spiel_komplett_beenden()
         return
 
-    spieler_name = spieler_liste[aktueller_spieler_index]["name"] # Holt den Namen des Spielers, der aktuell an der Reihe ist, aus der Spielerliste
-    punkte = 0# Setzt den Punktestand für die neue Spielrunde des nächsten Spielers zurück
-    frage_index = 0 # Setzt den Fragenzähler für die neue Spielrunde des nächsten Spielers zurück
-    spiel_fragen = waehle_spiel_fragen()  #Wählt neue zufällige Fragen für die Runde aus
+    # Namen des aktuell ausgewählten Spielers laden.
+    spieler_name = spieler_liste[aktueller_spieler_index]["name"]
+
+    # Rundenwerte zurücksetzen.
+    punkte = 0
+    frage_index = 0
+
+    # Neun neue zufällige Fragen auswählen.
+    spiel_fragen = waehle_spiel_fragen()
 
     if timer_id is not None: # Stoppt eventuell laufenden Timer aus vorheriger Runde
         root.after_cancel(timer_id)
@@ -1051,7 +1132,8 @@ def zeige_frage(): # Zeigt die aktuelle Frage und die Antwortmöglichkeiten an.
         root.after_cancel(timer_id)
         timer_id = None
 
-    frage = spiel_fragen[frage_index] # Holt neue Frage aus der Fragenliste
+    # Holt die aktuelle Frage aus der Rundenliste.
+    frage = spiel_fragen[frage_index]
     schwierigkeitsgrad = aktuelle_schwierigkeit()  # Bestimmt die aktuelle Schwierigkeit
 
     info_label.config( # Aktualisiert Infoanzeige (Spieler, Modus, Schwierigkeit)
@@ -1065,10 +1147,15 @@ def zeige_frage(): # Zeigt die aktuelle Frage und die Antwortmöglichkeiten an.
         font=("Arial", 20)
     )
 
-    antworten = frage["antworten"][:] # Mischt die Antwortmöglichkeiten zufällig
+    # Erstellt eine Kopie der Antwortliste,
+    # damit die Originaldaten nicht verändert werden.
+    antworten = frage["antworten"][:]
+
+    # Mischt die Reihenfolge der kopierten Antworten zufällig.
     random.shuffle(antworten)
 
-    for i in range(4): # Erstellt die Antwortbuttons neu
+    # Aktualisiert die vier vorhandenen Antwortfelder.
+    for i in range(4):
         # Alte Klick-Verbindungen werden zuerst entfernt.
         # Dadurch bleibt pro Antwortfeld immer nur eine aktuelle Klickaktion aktiv.
         antwort_buttons[i].unbind("<Button-1>")
@@ -1083,12 +1170,14 @@ def zeige_frage(): # Zeigt die aktuelle Frage und die Antwortmöglichkeiten an.
 
         # Bei Labels gibt es kein command=...
         # Deshalb verbinden wir den Mausklick mit bind().
+        # "<Button-1>" steht für einen Klick mit der linken Maustaste.
         antwort_buttons[i].bind(
             "<Button-1>",
             lambda event, antwort=antworten[i]: pruefe_antwort(antwort)
         )
 
     timer = ZEITLIMIT[modus][schwierigkeitsgrad] # Setzt Timer abhängig von Modus und Schwierigkeit
+    # Startzeit direkt in der Oberfläche anzeigen.
     timer_label.config(text=f"Zeit: {timer}")
 
     starte_timer() # Startet den Countdown
@@ -1111,18 +1200,20 @@ def starte_timer(): # Verwaltet den Countdown-Timer für jede Frage
         messagebox.showerror("Zeit vorbei", "Du warst zu langsam!")
         root.after(1000, spieler_runde_beenden)
     else:
-        timer -= 1 # Timer läuft weiter runter
-        timer_id = root.after(1000, starte_timer) # Ruft Funktion nach 1 Sekunde erneut auf
+        # Eine Sekunde von der Restzeit abziehen.
+        timer -= 1
+        # Funktion nach 1000 ms erneut aufrufen und ID speichern.
+        timer_id = root.after(1000, starte_timer)
 
 
 def pruefe_antwort(auswahl): # Prüft, ob die ausgewählte Antwort richtig oder falsch ist
     global punkte, frage_index, timer_id, antwort_gesperrt
 
-    # Falls schon geantwortet wurde, passiert nichts mehr.
-    # So bleiben die Buttons sichtbar und müssen nicht deaktiviert werden.
+    # Falls bereits geantwortet wurde, wird die Funktion sofort beendet.
     if antwort_gesperrt:
         return
 
+    # Ab jetzt werden weitere Antworten und Joker blockiert.
     antwort_gesperrt = True
 
     if timer_id is not None: # Stoppt den Timer
@@ -1138,6 +1229,7 @@ def pruefe_antwort(auswahl): # Prüft, ob die ausgewählte Antwort richtig oder 
         button.unbind("<Button-1>")
 
     if auswahl == richtige_antwort: # Wenn Antwort richtig ist
+        # Passende Punkte aus dem PUNKTE-Dictionary addieren.
         punkte += PUNKTE[schwierigkeitsgrad]
         punkte_label.config(text=f"Punkte: {punkte}")
 
@@ -1154,7 +1246,8 @@ def pruefe_antwort(auswahl): # Prüft, ob die ausgewählte Antwort richtig oder 
             )
         )
 
-        root.after(1600, naechste_frage) # Geht zur nächsten Frage
+        # Nach 1600 ms automatisch zur nächsten Frage wechseln.
+        root.after(1600, naechste_frage)
 
     else: # Wenn Antwort falsch ist
         for button in antwort_buttons:
@@ -1173,6 +1266,7 @@ def pruefe_antwort(auswahl): # Prüft, ob die ausgewählte Antwort richtig oder 
             )
         )
 
+        # Nach 2000 ms die Spielerrunde beenden.
         root.after(2000, spieler_runde_beenden)
 
 
@@ -1205,6 +1299,7 @@ def spieler_runde_beenden(): # Beendet die Runde eines Spielers
     aktueller_spieler_index += 1 # Nächster Spieler ist dran
     starte_spieler_runde()
 
+
 def spiel_neu_starten():
     global spieler_liste, aktueller_spieler_index
     global spieler_name, modus, spiel_fragen, frage_index, punkte, timer, timer_id
@@ -1212,8 +1307,8 @@ def spiel_neu_starten():
     global joker_zeit_verfuegbar, joker_switch_verfuegbar
     global antwort_gesperrt, tastatur_aktiv
 
-    # Diese Funktion setzt alle wichtigen Spielwerte zurück.
-    # Danach kann eine neue Runde gestartet werden, ohne das Programm neu zu öffnen.
+    # Setzt die aktuelle Partie zurück.
+    # Dauerhaft gespeicherte Highscores bleiben erhalten.
     if timer_id is not None:
         root.after_cancel(timer_id)
         timer_id = None
@@ -1247,7 +1342,7 @@ def spiel_neu_starten():
         button.unbind("<Button-1>")
         button.config(text="", bg="#004C99", fg="white")
 
-    # Optional wieder Startmenü anzeigen.
+    # Startmenü für eine neue Partie erneut anzeigen.
     startmenue()
 
     # Danach werden wieder Spieleranzahl, Namen und Modus abgefragt.
@@ -1255,6 +1350,7 @@ def spiel_neu_starten():
     starte_spieler_runde()
 
 def spiel_komplett_beenden():
+    # Sortiert die Spieler nach Punkten, höchste Punktzahl zuerst.
     sortierte_spieler = sorted(
         spieler_liste,
         key=lambda spieler: spieler["punkte"],
@@ -1373,7 +1469,10 @@ def zeitjoker():
         messagebox.showwarning("Joker ", "Zeitjoker wurde schon benutzt!")
         return
 
+    # Zehn Sekunden zur aktuellen Restzeit addieren.
     timer += 10
+
+    # Neue Restzeit sofort anzeigen.
     timer_label.config(text=f"Zeit: {timer}")
 
     joker_zeit_verfuegbar = False # Joker als benutzt markieren und Button deaktivieren
@@ -1393,6 +1492,7 @@ def frage_wechseln_joker():
 
     schwierigkeitsgrad = aktuelle_schwierigkeit() # Ermittelt die Schwierigkeit der aktuellen Frage
 
+    # Sammelt noch nicht verwendete Fragen derselben Schwierigkeit.
     moegliche_fragen = []
 
     for frage in fragen[schwierigkeitsgrad]: # Es wird eine neue Frage mit derselben Schwierigkeit gesucht.
@@ -1406,7 +1506,10 @@ def frage_wechseln_joker():
         )
         return
 
-    neue_frage = random.choice(moegliche_fragen) # Wählt zufällig eine neue Frage aus und ersetzt die aktuelle
+    # Wählt zufällig eine mögliche Ersatzfrage aus.
+    neue_frage = random.choice(moegliche_fragen)
+
+    # Ersetzt die aktuelle Frage an derselben Position.
     spiel_fragen[frage_index] = neue_frage
 
     joker_switch_verfuegbar = False # Joker als benutzt markieren und Button deaktivieren
@@ -1417,6 +1520,7 @@ def frage_wechseln_joker():
         "Die Frage wurde durch eine neue Frage im gleichen Schwierigkeitsgrad ersetzt."
     )
 
+    # Ersatzfrage anzeigen und Zeitlimit für die neue Frage neu setzen.
     zeige_frage()
 
 
@@ -1432,6 +1536,7 @@ def taste(event):
     taste = event.char.lower() # Liest die gedrückte Taste ein und wandelt sie in Kleinbuchstaben um
 
     if taste in ["1", "2", "3", "4"]: # Tasten 1 bis 4 wählen die entsprechende Antwort aus
+        # Listen beginnen bei Index 0, deshalb wird 1 abgezogen.
         index = int(taste) - 1
         antwort = antwort_buttons[index]["text"]
 
@@ -1453,11 +1558,13 @@ def taste(event):
 def startmenue():
     # Dieses Fenster erscheint vor den Startabfragen.
     # Der Spieler kann hier die Regeln lesen oder direkt das Spiel starten.
+    # Toplevel erstellt ein zusätzliches Fenster neben dem Hauptfenster.
     start_fenster = tk.Toplevel(root)
     start_fenster.title("Startmenü")
     start_fenster.geometry("560x420")
     start_fenster.configure(bg="#001f3f")
 
+    # Holt das Startfenster kurz sicher in den Vordergrund.
     start_fenster.lift()
     start_fenster.attributes("-topmost", True)
     start_fenster.after(
@@ -1543,7 +1650,9 @@ def startmenue():
     # Wenn das Startmenü über X geschlossen wird, wird das Programm beendet.
     start_fenster.protocol("WM_DELETE_WINDOW", programm_beenden)
 
+    # Sperrt die Bedienung anderer App-Fenster, solange das Startmenü offen ist.
     start_fenster.grab_set()
+    # Erst nach dem Schließen des Startmenüs läuft der Programmablauf weiter.
     root.wait_window(start_fenster)
 
 
@@ -1553,7 +1662,7 @@ def startmenue():
 
 root.bind_all("<Key>", taste) # Aktiviert die Tastatursteuerung für das gesamte Fenster
 
-startmenue()
+startmenue() # Zuerst nur Startmenü anzeigen
 
 start_abfragen() # Fragt die Spielerinformationen und den Spielmodus ab
 starte_spieler_runde() # Startet die erste Spielrunde
