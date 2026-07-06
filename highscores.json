@@ -91,6 +91,16 @@
     },
     {
         "name": "h",
+        "punkte": 100,
+        "modus": "Hard"
+    },
+    {
+        "name": "h",
+        "punkte": 100,
+        "modus": "Hard"
+    },
+    {
+        "name": "h",
         "punkte": 90,
         "modus": "Fair"
     },
@@ -100,6 +110,11 @@
     },
     {
         "name": "2",
+        "punkte": 70,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
         "punkte": 70,
         "modus": "Fair"
     },
@@ -140,6 +155,16 @@
     },
     {
         "name": "helin",
+        "punkte": 30,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 30,
+        "modus": "Hard"
+    },
+    {
+        "name": "h",
         "punkte": 30,
         "modus": "Fair"
     },
@@ -225,6 +250,16 @@
     },
     {
         "name": "helin",
+        "punkte": 20,
+        "modus": "Fair"
+    },
+    {
+        "name": "0",
+        "punkte": 20,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
         "punkte": 20,
         "modus": "Fair"
     },
@@ -447,6 +482,16 @@
         "name": "f",
         "punkte": 0,
         "modus": "Hard"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
+    },
+    {
+        "name": "h",
+        "punkte": 0,
+        "modus": "Fair"
     },
     {
         "name": "h",

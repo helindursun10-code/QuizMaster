@@ -1160,8 +1160,10 @@ def zeige_frage(): # Zeigt die aktuelle Frage und die Antwortmöglichkeiten an.
         # Dadurch bleibt pro Antwortfeld immer nur eine aktuelle Klickaktion aktiv.
         antwort_buttons[i].unbind("<Button-1>")
 
+        antwort_buttons[i].antwort_wert = antworten[i]
+
         antwort_buttons[i].config(
-            text=antworten[i],
+            text=f"{i + 1}. {antworten[i]}",
             bg="#004C99",
             fg="white",
             relief="raised",
@@ -1228,38 +1230,47 @@ def pruefe_antwort(auswahl): # Prüft, ob die ausgewählte Antwort richtig oder 
         # Nach einer Antwort sollen die Antwortfelder nicht mehr klickbar sein.
         button.unbind("<Button-1>")
 
-    if auswahl == richtige_antwort: # Wenn Antwort richtig ist
+    if auswahl == richtige_antwort:
         # Passende Punkte aus dem PUNKTE-Dictionary addieren.
         punkte += PUNKTE[schwierigkeitsgrad]
         punkte_label.config(text=f"Punkte: {punkte}")
 
-        for button in antwort_buttons: # Markiert richtige Antwort grün
-            if button["text"] == auswahl:
+        # Das Feld der richtigen Antwort grün markieren.
+        # Verglichen wird der interne Antwortwert ohne sichtbare Nummer.
+        for button in antwort_buttons:
+            if button.antwort_wert == auswahl:
                 button.config(bg="green", fg="white")
 
         zeige_effekt(True)
 
-        root.after( # Zeigt kurze Erfolgsmeldung
+        # Nach kurzer Verzögerung die Erfolgsmeldung anzeigen.
+        root.after(
             600,
             lambda: frage_label.config(
                 text=f"✅ RICHTIG!\n\n+{PUNKTE[schwierigkeitsgrad]} Punkte"
             )
         )
 
-        # Nach 1600 ms automatisch zur nächsten Frage wechseln.
+        # Genau einmal nach 1600 ms zur nächsten Frage wechseln.
         root.after(1600, naechste_frage)
 
-    else: # Wenn Antwort falsch ist
+
+
+    else:
+        # Gewählte falsche Antwort rot markieren
+        # und die richtige Antwort grün anzeigen.
         for button in antwort_buttons:
-            if button["text"] == auswahl: # Markiert falsche Antwort rot und richtige grün
+            if button.antwort_wert == auswahl:
                 button.config(bg="red", fg="white")
 
-            if button["text"] == richtige_antwort:
+            if button.antwort_wert == richtige_antwort:
                 button.config(bg="green", fg="white")
 
-        zeige_effekt(False) # Zeigt Fehler-Effekt
+        zeige_effekt(False)
 
-        root.after( # Zeigt richtige Antwort im Text
+        # Nach kurzer Verzögerung die richtige Antwort anzeigen.
+        root.after(
+
             600,
             lambda: frage_label.config(
                 text=f"❌ FALSCH!\n\nRichtige Antwort: {richtige_antwort}"
@@ -1404,8 +1415,13 @@ def joker_5050():
 
     falsche_buttons = [] # Speichert alle Buttons mit falschen Antworten
 
+    # Sammelt nur Antwortfelder,
+    # deren interner Antwortwert falsch und noch sichtbar ist.
     for button in antwort_buttons:
-        if button["text"] != richtige_antwort and button["text"] != "---":
+        if (
+                button.antwort_wert != richtige_antwort
+                and button.antwort_wert != "---"
+        ):
             falsche_buttons.append(button)
 
     # Zwei falsche Antworten werden entfernt.
@@ -1415,6 +1431,10 @@ def joker_5050():
             bg="#333333",
             fg="white"
         )
+
+        # Auch der interne Antwortwert wird als entfernt markiert.
+        # Dadurch kann die Antwort nicht über die Tastatur gewählt werden.
+        button.antwort_wert = "---"
 
         # Entfernte Antwort darf nicht mehr anklickbar sein.
         button.unbind("<Button-1>")
@@ -1538,9 +1558,9 @@ def taste(event):
     if taste in ["1", "2", "3", "4"]: # Tasten 1 bis 4 wählen die entsprechende Antwort aus
         # Listen beginnen bei Index 0, deshalb wird 1 abgezogen.
         index = int(taste) - 1
-        antwort = antwort_buttons[index]["text"]
+        antwort = antwort_buttons[index].antwort_wert
 
-        if antwort != "---":  # Bereits entfernte Antworten (---) können nicht ausgewählt werden
+        if antwort != "---":
             pruefe_antwort(antwort)
 
     elif taste == "f": # Tastenkürzel für 50:50 Joker
