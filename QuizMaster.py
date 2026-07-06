@@ -414,7 +414,7 @@ def zeige_highscores():
     rangliste_label = tk.Label(
         rangliste_fenster,
         text=text,
-        font=("Arial", 14),
+        font=("Arial", 20),
         fg="white",
         bg="#001f3f",
         justify="left"
@@ -557,7 +557,7 @@ def zeige_regeln():
         text_frame,
         width=72,
         height=22,
-        font=("Arial", 13),
+        font=("Arial", 15),
         fg="white",
         bg="#001f3f",
         wrap="word",
@@ -1024,7 +1024,7 @@ regeln_button.pack(pady=5)
 hilfe_label = tk.Label( # Zeigt Tastenkürzel für das Spiel an
     main_frame,
     text="Tasten: 1-4 Antworten | F = 50:50 | A = Anrufjoker | Z = Zeitjoker | W = Frage wechseln",
-    font=("Arial", 12),
+    font=("Arial", 14),
     fg="white",
     bg="#001f3f"
 )
@@ -1575,7 +1575,7 @@ def startmenue():
     titel = tk.Label(
         start_fenster,
         text=PROJEKTNAME,
-        font=("Arial", 28, "bold"),
+        font=("Arial", 35, "bold"),
         fg="gold",
         bg="#001f3f"
     )
@@ -1584,7 +1584,7 @@ def startmenue():
     slogan = tk.Label(
         start_fenster,
         text=SLOGAN,
-        font=("Arial", 14, "italic"),
+        font=("Arial", 20, "italic"),
         fg="gold",
         bg="#001f3f"
     )
